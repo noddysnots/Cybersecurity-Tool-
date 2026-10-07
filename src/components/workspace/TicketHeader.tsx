@@ -41,6 +41,7 @@ export function TicketHeader({
     <header
       className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-surface-1 px-4 py-2"
       data-testid="ticket-header"
+      data-annotation="ticket-header"
     >
       <Link
         to="/tickets"

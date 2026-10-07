@@ -19,6 +19,7 @@ export function PlaybookRail({ state, onSelect }: PlaybookRailProps) {
       className="flex h-full min-h-0 w-[200px] shrink-0 flex-col border-r border-border bg-surface-1"
       aria-label={workspaceCopy.playbookTitle}
       data-testid="playbook-rail"
+      data-annotation="playbook-rail"
     >
       <p className="border-b border-border px-3 py-2 text-xs font-medium text-text-muted">
         {workspaceCopy.playbookTitle}
@@ -35,6 +36,9 @@ export function PlaybookRail({ state, onSelect }: PlaybookRailProps) {
               <button
                 type="button"
                 data-testid={`playbook-step-${step.id}`}
+                data-annotation={
+                  step.id === "scope" ? "playbook-step-scope" : undefined
+                }
                 data-state={gate.done ? "done" : active ? "active" : gate.unlocked ? "unlocked" : "locked"}
                 disabled={!selectable}
                 title={title}

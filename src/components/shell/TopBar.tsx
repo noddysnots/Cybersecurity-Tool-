@@ -60,6 +60,7 @@ export function TopBar() {
 
   const handleReset = () => {
     resetDemo();
+    useUiPrefs.setState({ guideByTicket: {}, openAnnotationId: null });
     setMenuOpen(false);
   };
 
@@ -153,7 +154,7 @@ export function TopBar() {
           ) : null}
         </button>
         {notifyOpen ? (
-          <div className="floating-shadow absolute right-0 z-40 mt-2 w-72 rounded-[var(--radius-panel)] border border-border bg-surface-2 p-3">
+          <div className="floating-shadow absolute right-0 z-[90] mt-2 w-72 rounded-[var(--radius-panel)] border border-border bg-surface-2 p-3">
             <p className="text-sm font-medium text-text">{shellCopy.notificationsLabel}</p>
             {notifyCount === 0 ? (
               <p className="mt-2 text-sm text-text-muted">{shellCopy.notificationsEmpty}</p>
@@ -187,7 +188,7 @@ export function TopBar() {
         {menuOpen ? (
           <div
             role="menu"
-            className="floating-shadow absolute right-0 z-40 mt-2 w-56 rounded-[var(--radius-panel)] border border-border bg-surface-2 py-1"
+            className="floating-shadow absolute right-0 z-[90] mt-2 w-56 rounded-[var(--radius-panel)] border border-border bg-surface-2 py-1"
             data-testid="user-menu-panel"
           >
             <div className="border-b border-border px-3 py-2">

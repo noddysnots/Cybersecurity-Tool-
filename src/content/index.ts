@@ -30,3 +30,21 @@ export {
   remoteNetworksCopy,
   supportingShared,
 } from "./supporting";
+export {
+  CASE_1_GUIDE_STEPS,
+  CASE_2_GUIDE_STEPS,
+  guideChrome,
+  guideStepsForCase,
+  type GuideActionId,
+  type GuideStepDef,
+} from "./guide";
+export {
+  ALL_ANNOTATIONS,
+  HOME_ANNOTATIONS,
+  TICKETS_ANNOTATIONS,
+  WORKSPACE_ANNOTATIONS,
+  annotationsChrome,
+  annotationsForPage,
+  type AnnotationPage,
+  type AnnotationPinDef,
+} from "./annotations";

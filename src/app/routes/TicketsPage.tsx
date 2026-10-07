@@ -70,7 +70,11 @@ export function TicketsPage() {
             {ticketsCopy.pageTitle}
           </h1>
           <p className="mt-0.5 text-sm text-text-muted">{ticketsCopy.pageSubtitle}</p>
-          <p className="mt-1 text-xs text-text-faint" data-testid="seeded-summary">
+          <p
+            className="mt-1 text-xs text-text-faint"
+            data-testid="seeded-summary"
+            data-annotation="seeded-summary"
+          >
             {allCount} {ticketsCopy.seededLabel}
             {items.some((i) => i.ticket.id === "TKT-24817")
               ? " · TKT-24817"
@@ -87,6 +91,7 @@ export function TicketsPage() {
             aria-label={ticketsCopy.viewGrid}
             aria-pressed={view === "grid"}
             data-testid="tickets-view-grid"
+            data-annotation="tickets-view-grid"
             onClick={() => setView("grid")}
           >
             <LayoutGrid className="h-4 w-4" aria-hidden />
@@ -99,6 +104,7 @@ export function TicketsPage() {
             aria-label={ticketsCopy.viewTable}
             aria-pressed={view === "table"}
             data-testid="tickets-view-table"
+            data-annotation="tickets-view-table"
             onClick={() => setView("table")}
           >
             <Table2 className="h-4 w-4" aria-hidden />
@@ -135,6 +141,7 @@ export function TicketsPage() {
             role="tab"
             aria-selected={tab === t.id}
             data-testid={`tickets-tab-${t.id}`}
+            data-annotation={t.id === "active" ? "tickets-tab-active" : undefined}
             className={cn(
               "rounded-[var(--radius-control)] px-3 py-1.5 text-sm transition-colors",
               tab === t.id

@@ -69,7 +69,9 @@ test.describe("Phase 0 smoke", () => {
 
     for (const route of protectedRoutes) {
       await page.goto(route.path, { waitUntil: "networkidle" });
-      await expect(page.getByRole("heading", { name: route.heading })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: route.heading }).first(),
+      ).toBeVisible();
       await page.screenshot({
         path: path.join(screensDir, `${route.name}.png`),
         fullPage: false,

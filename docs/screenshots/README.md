@@ -1,11 +1,11 @@
 # Annotated screenshots
 
-Place three PNG captures here after running the app with **Annotations** on:
+PNG captures with **Annotations** on (numbered pins visible):
 
-1. `01-alerts.png` from `/alerts`
-2. `02-investigate.png` from `/investigate/ALR-1042` (or Scenario A)
-3. `03-resolve.png` from `/resolve/ALR-1042` after working Scenario A
+1. `01-home-annotations.png` from `/home`
+2. `02-tickets-annotations.png` from `/tickets`
+3. `03-workspace-annotations.png` from `/tickets/TKT-24817`
 
-Keep numbered annotation pins visible. Sentence case file names as listed. No em or en dashes in any captions you add.
+Sentence case captions only. No em or en dashes in any captions you add.
 
-Until captures exist, this folder may only hold this README (and optional `.gitkeep`).
+These files are produced by the Phase 9 Playwright suite (`tests/e2e/phase9.spec.ts`).

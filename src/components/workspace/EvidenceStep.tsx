@@ -30,6 +30,7 @@ export function EvidenceStep({ ticketId, state, onPin, onContinue }: EvidenceSte
           type="button"
           size="sm"
           data-testid="evidence-continue"
+          data-guide-anchor="evidence-continue"
           disabled={!state.evidenceComplete && state.pinnedEvidence.length === 0}
           title={
             !state.evidenceComplete && state.pinnedEvidence.length === 0

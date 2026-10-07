@@ -18,6 +18,7 @@ export function TicketCard({ item }: TicketCardProps) {
     <Link
       to={`/tickets/${ticket.id}`}
       data-testid={`ticket-card-${ticket.id}`}
+      data-annotation={`ticket-card-${ticket.id}`}
       className={cn(
         "flex flex-col gap-3 rounded-[var(--radius-panel)] border border-border bg-surface-1 p-4",
         "transition-colors hover:border-border-strong hover:bg-surface-2",

@@ -107,6 +107,7 @@ export function VerifyStep({
             type="button"
             size="sm"
             data-testid="verify-rerun"
+            data-guide-anchor="verify-rerun"
             disabled={
               !state.fixApplied ||
               (state.caseKey === "meet-quic" && state.pushJobPhase !== "success")

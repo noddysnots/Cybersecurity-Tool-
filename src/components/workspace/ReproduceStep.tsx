@@ -163,6 +163,7 @@ export function ReproduceStep({
           type="button"
           size="sm"
           data-testid="reproduce-ask-retry"
+          data-guide-anchor="reproduce-ask-retry"
           disabled={state.reproduceStarted}
           title={state.reproduceStarted ? logsCopy.reproduceAsked : undefined}
           onClick={() => onAskRetry(askBody)}

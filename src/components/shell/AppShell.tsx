@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
+import { AnnotationsLayer } from "@/components/annotations";
+import { GuideCoach } from "@/components/guide";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import { ConsoleDrawer } from "@/components/shell/ConsoleDrawer";
 import { LeftNav } from "@/components/shell/LeftNav";
@@ -45,6 +47,8 @@ export function AppShell() {
       </div>
       <CommandPalette />
       <ToastHost />
+      <GuideCoach />
+      <AnnotationsLayer />
     </div>
   );
 }

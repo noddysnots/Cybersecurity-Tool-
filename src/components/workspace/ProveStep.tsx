@@ -101,7 +101,13 @@ export function ProveStep({ ticketId, state, onPin, onContinue }: ProveStepProps
             </div>
           </dl>
           <div className="mt-4 flex flex-wrap gap-2">
-            <Button type="button" size="sm" data-testid="prove-run-match" onClick={runMatch}>
+            <Button
+              type="button"
+              size="sm"
+              data-testid="prove-run-match"
+              data-guide-anchor="prove-run-match"
+              onClick={runMatch}
+            >
               {proveCopy.runMatch}
             </Button>
             <Button
@@ -142,6 +148,7 @@ export function ProveStep({ ticketId, state, onPin, onContinue }: ProveStepProps
               type="button"
               size="sm"
               data-testid="prove-open-console"
+              data-guide-anchor="prove-open-console"
               onClick={() => openBranchCli()}
             >
               {proveCopy.openConsole}

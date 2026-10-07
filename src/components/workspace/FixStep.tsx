@@ -182,6 +182,7 @@ export function FixStep({
               type="button"
               size="sm"
               data-testid="fix-request-approval"
+              data-guide-anchor="fix-request-approval"
               disabled={state.approvalRequested}
               title={state.approvalRequested ? fixCopy.approvalSent : undefined}
               onClick={handleRequestApproval}
@@ -309,6 +310,7 @@ export function FixStep({
               type="button"
               size="sm"
               data-testid="fix-request-approval"
+              data-guide-anchor="fix-request-approval"
               disabled={state.approvalRequested}
               title={state.approvalRequested ? fixCopy.actionSent : undefined}
               onClick={handleRequestApproval}

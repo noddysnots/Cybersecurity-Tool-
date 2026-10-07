@@ -38,7 +38,11 @@ export function ReplyBox({ caseKey, disabled = false, onSend }: ReplyBoxProps) {
   }
 
   return (
-    <div className="border-t border-border px-3 py-2" data-testid="reply-box">
+    <div
+      className="border-t border-border px-3 py-2"
+      data-testid="reply-box"
+      data-annotation="reply-box"
+    >
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <div className="flex rounded-[var(--radius-control)] border border-border p-0.5">
           <button

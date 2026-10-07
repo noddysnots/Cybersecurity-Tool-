@@ -11,6 +11,7 @@ export function AuditTrail({ entries }: AuditTrailProps) {
     <section
       className="border-t border-border bg-surface-1"
       data-testid="audit-trail"
+      data-annotation="audit-trail"
       aria-label={auditCopy.title}
     >
       <div className="flex items-center justify-between border-b border-border px-4 py-2">

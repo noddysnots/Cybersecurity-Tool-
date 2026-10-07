@@ -98,11 +98,18 @@ export function IntakeStep({ ticket, state, onAcknowledge }: IntakeStepProps) {
       </dl>
 
       {acknowledged ? (
-        <p className="text-sm text-signal" data-testid="intake-complete">
+        <p
+          className="text-sm text-signal"
+          data-testid="intake-complete"
+          data-guide-anchor="intake-acknowledge"
+        >
           {workspaceCopy.intakeAlready}
         </p>
       ) : (
-        <div className="space-y-2 rounded-[var(--radius-panel)] border border-border bg-surface-1 p-3">
+        <div
+          className="space-y-2 rounded-[var(--radius-panel)] border border-border bg-surface-1 p-3"
+          data-guide-anchor="intake-acknowledge"
+        >
           <p className="text-sm text-text-muted">{workspaceCopy.intakeAckHint}</p>
           <textarea
             value={body}

@@ -47,6 +47,7 @@ export function ScopeStep({
           size="sm"
           variant="secondary"
           data-testid="scope-ask-all"
+          data-guide-anchor="scope-ask-all"
           disabled={asking || unanswered.length === 0}
           title={
             unanswered.length === 0

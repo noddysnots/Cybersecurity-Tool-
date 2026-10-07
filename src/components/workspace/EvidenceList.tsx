@@ -7,7 +7,11 @@ type EvidenceListProps = {
 
 export function EvidenceList({ items }: EvidenceListProps) {
   return (
-    <div className="border-t border-border px-3 py-2" data-testid="evidence-list">
+    <div
+      className="border-t border-border px-3 py-2"
+      data-testid="evidence-list"
+      data-annotation="evidence-list"
+    >
       <h3 className="text-xs font-medium text-text-muted">{workspaceCopy.evidenceTitle}</h3>
       {items.length === 0 ? (
         <p className="mt-1 text-xs text-text-faint">{workspaceCopy.evidenceEmpty}</p>

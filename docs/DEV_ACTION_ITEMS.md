@@ -1,35 +1,35 @@
 # Dev action items
 
-Bonus backlog for a production Triage Console. Each item has a one-line why and an acceptance check.
+Production backlog for Triage Console. Each item includes why and an acceptance check. From PLAN section 9.
 
-1. **Log query service**
-   - Why: Engineers need fast, time-partitioned search with a familiar PAN-OS style query language.
-   - Acceptance: Time-partitioned index plus query parser; p95 under 2s for a 24h window.
+1. **Log query service with time-partitioned index and PAN-OS query parser**
+   - Why: Engineers need familiar query syntax and sub-2s search over a 24h window without exporting CSVs.
+   - Acceptance: Time-partitioned index plus PAN-OS query parser; p95 under 2s for a 24h window.
 
-2. **Alert-to-log correlation**
-   - Why: Default query and window should come from alert entities so investigation starts scoped.
-   - Acceptance: Opening an alert maps entities to a default query and time window; both remain editable.
+2. **Ticket to telemetry linking**
+   - Why: Opening a ticket should auto-map users, devices, sites, and time windows so Evidence starts scoped.
+   - Acceptance: Ticket entities auto-map to users, devices, sites, and time windows; mappings remain editable.
 
-3. **Read-only diagnostic sandbox**
-   - Why: CLI verification belongs in the workflow without risking config writes.
-   - Acceptance: Allowlisted commands only, per-user audit, rate limits, no config mutations.
+3. **Read-only diagnostic sandbox for CLI and policy match**
+   - Why: TAC proof belongs in the workflow without risking config writes on customer gear.
+   - Acceptance: Allowlisted commands only, full audit, no config mutations.
 
-4. **Policy and config diff engine**
-   - Why: Fixes need a clear before and after plus a safe rollback path.
-   - Acceptance: Staged changes show a diff; one-click rollback restores the prior state.
+4. **Config audit with structured before/after diffs per object**
+   - Why: CHG style changes need a clear diff engineers can pin and cite in RCA.
+   - Acceptance: Structured before/after diffs per object; linked from tickets and rules.
 
-5. **Evidence model**
+5. **Change approval workflow with customer sign-off recorded on the ticket**
+   - Why: Unapproved pushes reopen tickets and break trust; sign-off must live on the case.
+   - Acceptance: Customer sign-off recorded on the ticket before push; audit entry required.
+
+6. **Live log streaming for reproduce sessions**
+   - Why: Reproduce needs websocket-scoped filters so new rows appear while the customer retries.
+   - Acceptance: Websocket live stream with scoped filters for a bounded reproduce window.
+
+7. **Evidence model: immutable, timestamped, exportable, linked to RCA**
    - Why: Pinned items must survive handoff and closure without re-collection.
-   - Acceptance: Evidence is immutable, timestamped, linked to an alert, and exportable.
+   - Acceptance: Evidence is immutable, timestamped, exportable, and linked to RCA.
 
-6. **Escalation package export**
-   - Why: IR needs a complete package without rebuilding the timeline by hand.
-   - Acceptance: Export Markdown and JSON; ticketing integration can attach the same payload.
-
-7. **Audit event schema**
-   - Why: Every triage action should be reconstructable for review and compliance.
-   - Acceptance: Schema covers assign, pin, console, resolve, escalate, and verify outcomes.
-
-8. **Guided mode content as data**
-   - Why: New scenarios should ship as playbooks, not code changes.
-   - Acceptance: JSON playbooks drive coach marks; adding a scenario needs no UI code edits.
+8. **Playbooks as data (JSON) so new case types ship without code**
+   - Why: Guide steps and gates should ship as content, not UI forks per case type.
+   - Acceptance: JSON playbooks drive coach marks and unlock rules; new case types need no UI code edits.

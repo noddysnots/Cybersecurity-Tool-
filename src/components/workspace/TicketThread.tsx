@@ -32,7 +32,11 @@ export function TicketThread({ messages, typing = false, readOnly = false }: Tic
   }, [messages.length, typing]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col" data-testid="ticket-thread">
+    <div
+      className="flex min-h-0 flex-1 flex-col"
+      data-testid="ticket-thread"
+      data-annotation="ticket-thread"
+    >
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 py-3">
         {messages.map((message) => (
           <article

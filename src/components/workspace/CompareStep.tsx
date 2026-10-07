@@ -49,6 +49,7 @@ export function CompareStep({ ticketId, state, onPin, onContinue }: CompareStepP
               size="sm"
               variant="secondary"
               data-testid="compare-pin"
+              data-guide-anchor="compare-pin"
               disabled={alreadyPinned}
               title={alreadyPinned ? logsCopy.comparePinned : undefined}
               onClick={() => {
@@ -155,6 +156,7 @@ export function CompareStep({ ticketId, state, onPin, onContinue }: CompareStepP
             size="sm"
             variant="secondary"
             data-testid="compare-pin"
+            data-guide-anchor="compare-pin"
             disabled={alreadyPinned}
             onClick={() => {
               onPin({

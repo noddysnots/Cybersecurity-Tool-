@@ -65,7 +65,8 @@
   --border-strong: #2e3955;
   --text: #e6eaf2;
   --text-muted: #8a94ab;
-  --text-faint: #5a6480;
+  /* Lifted from PLAN #5A6480 so 12px text meets WCAG AA on surface-2 (~4.5:1). */
+  --text-faint: #7a849c;
   --accent: #7c8cff;
   --signal: #3dd6c6;
   --warn: #f5c451;

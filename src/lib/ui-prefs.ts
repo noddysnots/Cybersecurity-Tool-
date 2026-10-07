@@ -41,11 +41,20 @@ function safeStorage(): Storage {
   }
 }
 
+export type GuideProgress = {
+  /** Index into the case guide step list. */
+  index: number;
+  skipped: boolean;
+};
+
 type UiPrefsState = {
   navCollapsed: boolean;
   clockZone: TimeZoneMode;
   guideEnabled: boolean;
   annotationsEnabled: boolean;
+  /** Resume Guide where the reviewer left off, per ticket. */
+  guideByTicket: Record<string, GuideProgress>;
+  openAnnotationId: string | null;
   consoleOpen: boolean;
   consoleMode: ConsoleMode;
   consoleHeight: number;
@@ -57,6 +66,9 @@ type UiPrefsState = {
   toggleClockZone: () => void;
   setGuideEnabled: (value: boolean) => void;
   setAnnotationsEnabled: (value: boolean) => void;
+  setGuideProgress: (ticketId: string, progress: GuideProgress) => void;
+  skipGuide: (ticketId: string) => void;
+  setOpenAnnotationId: (id: string | null) => void;
   setConsoleOpen: (value: boolean) => void;
   toggleConsole: () => void;
   setConsoleMode: (mode: ConsoleMode) => void;
@@ -72,6 +84,8 @@ export const useUiPrefs = create<UiPrefsState>()(
       clockZone: "IST",
       guideEnabled: true,
       annotationsEnabled: false,
+      guideByTicket: {},
+      openAnnotationId: null,
       consoleOpen: false,
       consoleMode: "prisma",
       consoleHeight: 260,
@@ -84,6 +98,24 @@ export const useUiPrefs = create<UiPrefsState>()(
         set({ clockZone: get().clockZone === "IST" ? "UTC" : "IST" }),
       setGuideEnabled: (value) => set({ guideEnabled: value }),
       setAnnotationsEnabled: (value) => set({ annotationsEnabled: value }),
+      setGuideProgress: (ticketId, progress) =>
+        set({
+          guideByTicket: {
+            ...get().guideByTicket,
+            [ticketId]: progress,
+          },
+        }),
+      skipGuide: (ticketId) =>
+        set({
+          guideByTicket: {
+            ...get().guideByTicket,
+            [ticketId]: {
+              index: get().guideByTicket[ticketId]?.index ?? 0,
+              skipped: true,
+            },
+          },
+        }),
+      setOpenAnnotationId: (id) => set({ openAnnotationId: id }),
       setConsoleOpen: (value) => set({ consoleOpen: value }),
       toggleConsole: () => set({ consoleOpen: !get().consoleOpen }),
       setConsoleMode: (mode) => set({ consoleMode: mode }),
@@ -100,6 +132,7 @@ export const useUiPrefs = create<UiPrefsState>()(
         clockZone: state.clockZone,
         guideEnabled: state.guideEnabled,
         annotationsEnabled: state.annotationsEnabled,
+        guideByTicket: state.guideByTicket,
       }),
     },
   ),

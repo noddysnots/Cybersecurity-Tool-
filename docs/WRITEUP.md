@@ -1,26 +1,28 @@
 # Triage Console write-up
 
-**Problem.** When a cloud security alert fires, the engineer jumps between the alert, four log types, policy config, and a CLI to answer one question: is this a real threat, a misconfiguration, or noise? Context is scattered, so reaching a confident decision is slow and evidence gets lost between tools.
+One printed page. Built by Sarthak Pant.
 
-**Persona.** Priya Nair, L2 Cloud Security Engineer on a Prisma Access style SASE for about 4,000 users and 12 branch sites. She handles 30 to 50 alerts per shift. Most are noise or config issues; a few are real. From a TAC background she pins time and entities first, stays fluent in CLI, and hates losing her place across tabs. Success means closing clear cases fast and escalating real ones with evidence nobody re-collects.
+**Problem.** A customer reports Google Meet is broken, or the platform raises a branch tunnel down. The engineer must turn a vague complaint into a precise scope (who, when, what changed), find evidence across logs, config history, and CLI, prove the root cause, get the fix approved, verify with the customer, and document it. Today that context lives in 5 to 7 different tools, so time to root cause is slow and evidence is lost.
 
-## Features (priority order)
+**Persona.** Priya Nair, Cloud Security TAC Engineer (L2) on a Prisma Access style SASE for about 4,000 users and 12 branch sites. She holds 6 to 10 active tickets. Method: never trust the first description. Scope first, then logs, then compare failing vs working, then reproduce live, then prove in CLI. Never changes customer config without written approval.
 
-1. **Time-scoped investigation workspace (P0).** Biggest time sink today is re-scoping each tool to the incident window.
-2. **Evidence pinning that flows into resolution (P0).** Removes re-collection at escalation and closure.
-3. **Integrated console with scenario-aware diagnostics (P0).** TAC engineers verify in CLI before acting; keeping it in the workspace keeps context.
-4. **Outcome-specific resolution with verify gate (P1).** Prevents closing without proof.
-5. **Guided mode (P1).** Onboards new L1 and L2 engineers into the TAC method.
-6. **Correlated timeline strip (P2).** Makes patterns like beacons and retries obvious.
+## Features by priority
 
-**Prioritization logic.** Ranked by (time saved per alert x alerts per shift) and by risk reduced (wrong closures, missed threats). Anything that does not shorten time-to-evidence or improve decision quality is cut.
+1. **P0 Ticket workspace with the TAC playbook rail.** Turns a vague complaint into a guided, auditable path.
+2. **P0 Scoping questions with live answers.** The when, who, what changed step decides everything downstream.
+3. **P0 Time and user scoped evidence with pinning.** Evidence becomes the immutable spine for the rest of the case.
+4. **P0 Compare failing vs working user.** The fastest route to root cause in policy cases.
+5. **P1 Live reproduce and in-workspace console.** Prove before changing anything.
+6. **P1 Fix with approval, push job, and verify gate.** Stops unapproved pushes and unverified closes.
+7. **P1 Auto-drafted RCA from evidence.** Close only after customer confirmation.
+8. **P2 Guide mode for new engineers.** Coach marks on real controls per playbook step.
+
+**Prioritization.** Ranked by time saved per ticket times tickets per shift, and by risk reduced (wrong fixes, unapproved changes, reopened tickets). Cut anything that does not shorten time to root cause or improve fix quality.
 
 ## Success metrics
 
 | Kind | Metric |
 |---|---|
-| Input | Share of alerts opened in the workspace (vs external tools); share with a pinned time window; console usage per investigation |
-| Output | Median time to first evidence; mean time to resolve (MTTR); share of alerts closed at L2 without escalation |
-| Check | Reopen rate within 7 days; false-negative escalations found later; verify-gate bypass attempts |
-
-Built by Sarthak Pant.
+| Input | % tickets with scope questions completed before log search; % with a pinned time window; compare view usage |
+| Output | Median time to root cause; mean time to resolve; first-response SLA met % |
+| Check | Reopen rate within 7 days; changes pushed without approval (target 0); customer satisfaction on close |

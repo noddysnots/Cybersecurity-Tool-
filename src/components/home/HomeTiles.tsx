@@ -54,6 +54,7 @@ function TileShell({
   return (
     <section
       data-testid={testId}
+      data-annotation={testId}
       className={cn(
         "flex min-h-0 flex-col rounded-[var(--radius-tile)] border border-border bg-surface-1 p-3",
         className,
@@ -185,6 +186,7 @@ export function PlatformHealthTile() {
               : "border-signal/40 bg-surface-2 text-signal",
           )}
           data-testid="pune-health"
+          data-annotation="pune-health"
         >
           <Network className="h-4 w-4" aria-hidden />
           {health.puneState === "down" ? homeCopy.puneDown : homeCopy.puneUp}

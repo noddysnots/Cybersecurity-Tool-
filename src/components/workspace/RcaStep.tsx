@@ -129,6 +129,7 @@ export function RcaStep({
         <Button
           type="button"
           data-testid="rca-close"
+          data-guide-anchor="rca-close"
           disabled={!canClose}
           title={canClose ? undefined : rcaCopy.closeDisabled}
           onClick={handleClose}
