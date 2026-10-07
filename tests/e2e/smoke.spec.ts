@@ -2,23 +2,23 @@ import { expect, test, type Page } from "@playwright/test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { clearDemoSession, signInAsAdmin, skipSplashForSession } from "./helpers/auth";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const screensDir = path.join(__dirname, "screens");
 
-const routes: { path: string; name: string }[] = [
-  { path: "/", name: "splash" },
-  { path: "/login", name: "login" },
-  { path: "/home", name: "home" },
-  { path: "/tickets", name: "tickets" },
-  { path: "/tickets/TKT-24817", name: "ticket-detail" },
-  { path: "/logs", name: "logs" },
-  { path: "/policies", name: "policies" },
-  { path: "/objects", name: "objects" },
-  { path: "/remote-networks", name: "remote-networks" },
-  { path: "/mobile-users", name: "mobile-users" },
-  { path: "/config-audit", name: "config-audit" },
-  { path: "/troubleshooting", name: "troubleshooting" },
-  { path: "/brief", name: "brief" },
+const protectedRoutes: { path: string; name: string; heading: string }[] = [
+  { path: "/home", name: "home", heading: "Home" },
+  { path: "/tickets", name: "tickets", heading: "Tickets" },
+  { path: "/tickets/TKT-24817", name: "ticket-detail", heading: "Ticket workspace" },
+  { path: "/logs", name: "logs", heading: "Logs" },
+  { path: "/policies", name: "policies", heading: "Policies" },
+  { path: "/objects", name: "objects", heading: "Objects" },
+  { path: "/remote-networks", name: "remote-networks", heading: "Remote networks" },
+  { path: "/mobile-users", name: "mobile-users", heading: "Mobile users" },
+  { path: "/config-audit", name: "config-audit", heading: "Config audit" },
+  { path: "/troubleshooting", name: "troubleshooting", heading: "Troubleshooting" },
+  { path: "/brief", name: "brief", heading: "Brief" },
 ];
 
 async function collectConsoleErrors(page: Page): Promise<string[]> {
@@ -35,12 +35,41 @@ async function collectConsoleErrors(page: Page): Promise<string[]> {
 }
 
 test.describe("Phase 0 smoke", () => {
-  test("every route loads without console errors", async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
+    await clearDemoSession(page);
+  });
+
+  test("public splash and login load without console errors", async ({ page }) => {
     const errors = await collectConsoleErrors(page);
 
-    for (const route of routes) {
+    await page.goto("/", { waitUntil: "networkidle" });
+    await expect(page.getByTestId("splash-name")).toHaveText("Sarthak Pant");
+    await page.screenshot({
+      path: path.join(screensDir, "splash.png"),
+      fullPage: false,
+    });
+
+    await page.keyboard.press("Escape");
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole("heading", { name: "Admin console" })).toBeVisible();
+    await page.screenshot({
+      path: path.join(screensDir, "login-smoke.png"),
+      fullPage: false,
+    });
+
+    expect(errors, `Console errors: ${errors.join(" | ")}`).toEqual([]);
+  });
+
+  test("every protected route loads without console errors when signed in", async ({
+    page,
+  }) => {
+    const errors = await collectConsoleErrors(page);
+    await skipSplashForSession(page);
+    await signInAsAdmin(page);
+
+    for (const route of protectedRoutes) {
       await page.goto(route.path, { waitUntil: "networkidle" });
-      await expect(page.getByRole("heading").first()).toBeVisible();
+      await expect(page.getByRole("heading", { name: route.heading })).toBeVisible();
       await page.screenshot({
         path: path.join(screensDir, `${route.name}.png`),
         fullPage: false,
@@ -52,6 +81,8 @@ test.describe("Phase 0 smoke", () => {
 
   test("hard refresh on /tickets/TKT-24817 does not 404", async ({ page }) => {
     const errors = await collectConsoleErrors(page);
+    await skipSplashForSession(page);
+    await signInAsAdmin(page);
 
     await page.goto("/tickets/TKT-24817", { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { name: "Ticket workspace" })).toBeVisible();

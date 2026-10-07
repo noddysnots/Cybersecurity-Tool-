@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Demo login (Phase 2): `admin` / `12345`
+Demo login: `admin` / `12345` (client-side demo auth only, not real security).
 
 Demo clock: Tue 6 Oct 2026, 12:05 IST (fixed; never reads the system clock).
 

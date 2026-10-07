@@ -107,3 +107,36 @@ body {
 .font-mono {
   font-family: var(--font-mono);
 }
+
+@keyframes field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.animate-field-shake {
+  animation: field-shake 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-field-shake {
+    animation: none;
+  }
+}
+
+.floating-shadow {
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--bg) 70%, black);
+}
