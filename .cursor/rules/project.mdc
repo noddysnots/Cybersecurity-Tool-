@@ -1,0 +1,35 @@
+---
+description: Project rules for Triage Console
+alwaysApply: true
+---
+
+# Source of truth
+- PLAN.md is the spec. Read the relevant section before every task. If a request conflicts with PLAN.md, stop and say so. Do not silently pick.
+- If something in PLAN.md is ambiguous, ask before coding. State assumptions explicitly.
+
+# Scope
+- Build only what the current phase asks. No extra features, settings, or abstractions.
+- No backend, no API routes, no auth. All data comes from src/data/*.json.
+- Never use the real system clock for data. Use the fixed demo clock from src/lib/time.ts (Tue 6 Oct 2026, 15:00 IST).
+
+# Code
+- TypeScript strict. No `any`. Types live in src/types.ts.
+- Small components, one job each. No abstraction for single-use code.
+- UI copy and guide/annotation text live in src/content, not hardcoded in components.
+- Zustand store in src/lib/store.ts. Persist with localStorage wrapped in try/catch.
+- Every changed line must trace to the current task. Do not reformat or refactor unrelated code. Mention dead code, do not delete it.
+
+# Design
+- Use only the tokens defined in PLAN.md section 8 (CSS variables). No ad hoc hex values in components.
+- IBM Plex Sans for UI, IBM Plex Mono only for technical values (IPs, ports, commands, rule names, log values).
+- Sentence case. No all-caps labels. No em dashes or en dashes anywhere in UI copy or docs.
+- Severity is never color alone: icon + label + color.
+- Borders over shadows; shadows only on floating layers.
+- Motion only in response to user action. Respect prefers-reduced-motion.
+- Every interactive element: keyboard reachable, visible focus ring, aria-label if icon-only.
+- Every data view has loading, empty, and error states.
+- No Palo Alto Networks logos, trademarks, or brand orange.
+
+# Verification
+- After each task: run `npm run lint`, `npm run build`, `npm test`. Fix failures before saying done.
+- End every task with: what changed, how you verified it, and anything left open.

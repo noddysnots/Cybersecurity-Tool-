@@ -1,0 +1,756 @@
+[
+  {
+    "id": "ALR-1042",
+    "title": "User cannot reach Salesforce",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-06T08:56:00.000Z",
+    "source": "Helpdesk INC-88213",
+    "category": "access",
+    "scenarioId": "A",
+    "entities": {
+      "users": [
+        "rahul.mehta@acme.io"
+      ],
+      "ips": [
+        "10.20.14.37",
+        "13.110.54.20"
+      ]
+    },
+    "summary": "Helpdesk ticket INC-88213 forwarded to security. Rahul Mehta (GlobalProtect, Mumbai) reports that login.salesforce.com stopped loading around 2:20 PM."
+  },
+  {
+    "id": "ALR-1022",
+    "title": "SQL injection attempt against prod-db-02",
+    "severity": "medium",
+    "status": "resolved",
+    "createdAt": "2026-10-06T08:37:27.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "prod-db-02"
+      ],
+      "ips": [
+        "10.40.3.6"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "Blocked at the edge. No application errors seen."
+  },
+  {
+    "id": "ALR-1026",
+    "title": "Decryption failures on ci-runner-03",
+    "severity": "low",
+    "status": "new",
+    "createdAt": "2026-10-06T08:28:09.000Z",
+    "source": "Decryption",
+    "category": "policy",
+    "entities": {
+      "hosts": [
+        "ci-runner-03"
+      ],
+      "ips": [
+        "10.50.5.43"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "Unsupported cipher suite offered by a legacy client."
+  },
+  {
+    "id": "ALR-1021",
+    "title": "Internal vulnerability scan from prod-web-04",
+    "severity": "low",
+    "status": "false_positive",
+    "createdAt": "2026-10-06T08:27:25.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "prod-web-04"
+      ],
+      "ips": [
+        "10.40.1.24"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Scheduled scan approved by the security team."
+  },
+  {
+    "id": "ALR-1055",
+    "title": "HA failover on Delhi-Branch-01",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-06T08:19:25.000Z",
+    "source": "HA monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Delhi-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.60"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "Planned maintenance. Peer took over and failed back."
+  },
+  {
+    "id": "ALR-1038",
+    "title": "Outbound connection to a known bad address from sanya.chattopadhyay@acme.io",
+    "severity": "high",
+    "status": "escalated",
+    "createdAt": "2026-10-06T07:38:48.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "users": [
+        "sanya.chattopadhyay@acme.io"
+      ],
+      "ips": [
+        "10.20.40.180"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Blocked by Block-Known-Bad-IPs. Endpoint scan requested from IR."
+  },
+  {
+    "id": "ALR-1052",
+    "title": "Remote network Kochi-Branch-01: path monitor failed",
+    "severity": "medium",
+    "status": "resolved",
+    "createdAt": "2026-10-06T07:25:13.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Kochi-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.90"
+      ]
+    },
+    "assignee": "Karan Shah",
+    "summary": "Path monitor probe target was rebooted. Recovered."
+  },
+  {
+    "id": "ALR-1033",
+    "title": "Service connection SC-AWS-Mumbai: latency above threshold",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-06T06:57:48.000Z",
+    "source": "Service connection monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "SC-AWS-Mumbai"
+      ]
+    },
+    "summary": "Round trip time above threshold for 15 minutes."
+  },
+  {
+    "id": "ALR-1024",
+    "title": "Certificate warning on intranet site for Paramartha Guha",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-06T06:49:11.000Z",
+    "source": "Helpdesk INC-88150",
+    "category": "access",
+    "entities": {
+      "users": [
+        "paramartha.guha@acme.io"
+      ],
+      "ips": [
+        "10.62.0.124"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Root CA missing on a new laptop. Pushed through device management."
+  },
+  {
+    "id": "ALR-1019",
+    "title": "Vimal Bhattathiri cannot connect to GlobalProtect",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-06T06:17:29.000Z",
+    "source": "Helpdesk INC-88190",
+    "category": "access",
+    "entities": {
+      "users": [
+        "vimal.bhattathiri@acme.io"
+      ],
+      "ips": [
+        "10.20.22.105"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Repeated portal login failures for vimal.bhattathiri@acme.io from Bengaluru."
+  },
+  {
+    "id": "ALR-1037",
+    "title": "Remote network Pune-Branch-01: tunnel down",
+    "severity": "high",
+    "status": "new",
+    "createdAt": "2026-10-06T06:12:40.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "scenarioId": "B",
+    "entities": {
+      "sites": [
+        "Pune-Branch-01"
+      ],
+      "hosts": [
+        "pune-fw-01"
+      ],
+      "ips": [
+        "203.0.113.10",
+        "198.51.100.24"
+      ]
+    },
+    "summary": "IPsec tunnel between pune-fw-01 (peer 203.0.113.10) and Prisma (198.51.100.24) went down at 11:42:08 IST. Change window CHG-4471 (11:30 to 11:40, netops.admin) closed shortly before."
+  },
+  {
+    "id": "ALR-1032",
+    "title": "Upload to unsanctioned storage blocked for shrishti.agarwal@acme.io",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-06T05:55:38.000Z",
+    "source": "URL filtering",
+    "category": "policy",
+    "entities": {
+      "users": [
+        "shrishti.agarwal@acme.io"
+      ],
+      "ips": [
+        "10.20.22.189"
+      ]
+    },
+    "summary": "Requests to mega.nz denied. Check for data exfiltration intent."
+  },
+  {
+    "id": "ALR-1031",
+    "title": "GlobalProtect login from a new country for anil.pandey@acme.io",
+    "severity": "medium",
+    "status": "investigating",
+    "createdAt": "2026-10-06T05:11:15.000Z",
+    "source": "GlobalProtect",
+    "category": "access",
+    "entities": {
+      "users": [
+        "anil.pandey@acme.io"
+      ],
+      "ips": [
+        "10.20.14.223"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "Login from an unusual location. Waiting on confirmation from the user."
+  },
+  {
+    "id": "ALR-1025",
+    "title": "Log4j exploit attempt blocked on prod-worker-11",
+    "severity": "medium",
+    "status": "resolved",
+    "createdAt": "2026-10-06T05:07:16.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "prod-worker-11"
+      ],
+      "ips": [
+        "10.40.4.31"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Attempt blocked by threat prevention. Host is patched."
+  },
+  {
+    "id": "ALR-1034",
+    "title": "Remote network Chennai-Branch-01: bandwidth above 90 percent",
+    "severity": "low",
+    "status": "new",
+    "createdAt": "2026-10-06T04:44:59.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Chennai-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.40"
+      ]
+    },
+    "summary": "Sustained high use during backup hours."
+  },
+  {
+    "id": "ALR-1049",
+    "title": "Command and control traffic from prod workload",
+    "severity": "critical",
+    "status": "new",
+    "createdAt": "2026-10-06T03:44:10.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "scenarioId": "C",
+    "entities": {
+      "hosts": [
+        "prod-api-07"
+      ],
+      "ips": [
+        "10.40.2.15",
+        "192.0.2.53",
+        "185.220.101.47"
+      ]
+    },
+    "summary": "prod-api-07 (10.40.2.15, SC-AWS-Mumbai) is querying update-check.cdn-sync.net every 60 seconds. First seen 09:12:05 IST."
+  },
+  {
+    "id": "ALR-1053",
+    "title": "Config change outside the change window",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-06T02:56:19.000Z",
+    "source": "Config audit",
+    "category": "policy",
+    "entities": {
+      "sites": [
+        "Delhi-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.60"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Rule description edited by secops.admin. Documented and approved."
+  },
+  {
+    "id": "ALR-1056",
+    "title": "Remote network Kochi-Branch-01: tunnel flapping",
+    "severity": "high",
+    "status": "investigating",
+    "createdAt": "2026-10-06T01:54:58.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Kochi-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.90"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Kochi-Branch-01 tunnel went down and up repeatedly in the last hours."
+  },
+  {
+    "id": "ALR-1028",
+    "title": "Remote network Delhi-Branch-01: DPD timeout",
+    "severity": "medium",
+    "status": "resolved",
+    "createdAt": "2026-10-06T01:54:58.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Delhi-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.60"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "Single DPD timeout during an ISP maintenance window."
+  },
+  {
+    "id": "ALR-1029",
+    "title": "VPN reconnect loop for pran.naik@acme.io",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T23:09:50.000Z",
+    "source": "GlobalProtect",
+    "category": "access",
+    "entities": {
+      "users": [
+        "pran.naik@acme.io"
+      ],
+      "ips": [
+        "10.63.0.192"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Client on an unstable home network. No gateway issue found."
+  },
+  {
+    "id": "ALR-1044",
+    "title": "Upload to cloud storage blocked for vimal.bhattathiri@acme.io",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T21:15:06.000Z",
+    "source": "URL filtering",
+    "category": "policy",
+    "entities": {
+      "users": [
+        "vimal.bhattathiri@acme.io"
+      ],
+      "ips": [
+        "10.20.22.105"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Category online-storage-and-backup is blocked by policy. User directed to the approved tool."
+  },
+  {
+    "id": "ALR-1047",
+    "title": "Service connection SC-Azure-Pune: BGP session reset",
+    "severity": "medium",
+    "status": "resolved",
+    "createdAt": "2026-10-05T19:56:30.000Z",
+    "source": "Service connection monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "SC-Azure-Pune"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Hold timer expired once. Session re-established in 40 seconds."
+  },
+  {
+    "id": "ALR-1027",
+    "title": "Dynamic DNS query from jump-host-01",
+    "severity": "medium",
+    "status": "false_positive",
+    "createdAt": "2026-10-05T18:24:47.000Z",
+    "source": "DNS security",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "jump-host-01"
+      ],
+      "ips": [
+        "10.10.1.5"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Known developer test domain. No further activity."
+  },
+  {
+    "id": "ALR-1058",
+    "title": "Port scan from external address against jump-host-01",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-05T17:53:51.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "jump-host-01"
+      ],
+      "ips": [
+        "10.10.1.5"
+      ]
+    },
+    "summary": "Reconnaissance from a single external source. Blocked at the edge."
+  },
+  {
+    "id": "ALR-1020",
+    "title": "Remote network Mumbai-HQ-01: high latency",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-05T16:33:34.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Mumbai-HQ-01"
+      ],
+      "ips": [
+        "203.0.113.20"
+      ]
+    },
+    "summary": "Round trip time above 120 ms for 30 minutes."
+  },
+  {
+    "id": "ALR-1036",
+    "title": "Legacy protocol blocked for prod-api-03",
+    "severity": "low",
+    "status": "false_positive",
+    "createdAt": "2026-10-05T16:31:24.000Z",
+    "source": "Application control",
+    "category": "policy",
+    "entities": {
+      "hosts": [
+        "prod-api-03"
+      ],
+      "ips": [
+        "10.40.2.11"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "Old print job script. Owner updated it."
+  },
+  {
+    "id": "ALR-1023",
+    "title": "SSH brute force against print-srv-01",
+    "severity": "high",
+    "status": "investigating",
+    "createdAt": "2026-10-05T16:24:18.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "print-srv-01"
+      ],
+      "ips": [
+        "10.10.2.40"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "More than 200 failed logins from several sources."
+  },
+  {
+    "id": "ALR-1041",
+    "title": "Repeated social networking blocks for swara.varman@acme.io",
+    "severity": "low",
+    "status": "investigating",
+    "createdAt": "2026-10-05T16:00:26.000Z",
+    "source": "URL filtering",
+    "category": "policy",
+    "entities": {
+      "users": [
+        "swara.varman@acme.io"
+      ],
+      "ips": [
+        "10.61.0.233"
+      ]
+    },
+    "assignee": "Karan Shah",
+    "summary": "More than 60 blocked requests in 24 hours."
+  },
+  {
+    "id": "ALR-1030",
+    "title": "Possible DNS tunneling from print-srv-01",
+    "severity": "medium",
+    "status": "false_positive",
+    "createdAt": "2026-10-05T15:59:03.000Z",
+    "source": "DNS security",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "print-srv-01"
+      ],
+      "ips": [
+        "10.10.2.40"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "High query volume came from a monitoring agent."
+  },
+  {
+    "id": "ALR-1057",
+    "title": "Remote network London-Office-01: tunnel down",
+    "severity": "high",
+    "status": "resolved",
+    "createdAt": "2026-10-05T15:50:08.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "London-Office-01"
+      ],
+      "ips": [
+        "203.0.113.120"
+      ]
+    },
+    "assignee": "Karan Shah",
+    "summary": "ISP link restored by the provider. Tunnel recovered on its own."
+  },
+  {
+    "id": "ALR-1043",
+    "title": "Peer to peer traffic blocked from enakshi.shah@acme.io",
+    "severity": "low",
+    "status": "new",
+    "createdAt": "2026-10-05T12:34:48.000Z",
+    "source": "Application control",
+    "category": "policy",
+    "entities": {
+      "users": [
+        "enakshi.shah@acme.io"
+      ],
+      "ips": [
+        "10.61.0.72"
+      ]
+    },
+    "assignee": "Arjun Rao",
+    "summary": "BitTorrent sessions denied by Block-P2P."
+  },
+  {
+    "id": "ALR-1045",
+    "title": "Grayware download by vimal.bhattathiri@acme.io",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T11:58:35.000Z",
+    "source": "WildFire",
+    "category": "threat",
+    "entities": {
+      "users": [
+        "vimal.bhattathiri@acme.io"
+      ],
+      "ips": [
+        "10.20.22.105"
+      ]
+    },
+    "assignee": "Karan Shah",
+    "summary": "WildFire verdict grayware. Blocked and the user was informed."
+  },
+  {
+    "id": "ALR-1051",
+    "title": "Duplicate: port scan against prod-worker-11",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T11:53:11.000Z",
+    "source": "Threat prevention",
+    "category": "threat",
+    "entities": {
+      "hosts": [
+        "prod-worker-11"
+      ],
+      "ips": [
+        "10.40.4.31"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Duplicate of an earlier alert. Merged."
+  },
+  {
+    "id": "ALR-1054",
+    "title": "Unapproved remote access tool blocked for anil.pandey@acme.io",
+    "severity": "medium",
+    "status": "new",
+    "createdAt": "2026-10-05T11:51:31.000Z",
+    "source": "Application control",
+    "category": "policy",
+    "entities": {
+      "users": [
+        "anil.pandey@acme.io"
+      ],
+      "ips": [
+        "10.20.14.223"
+      ]
+    },
+    "summary": "TeamViewer sessions denied by Block-Unapproved-Remote-Access."
+  },
+  {
+    "id": "ALR-1048",
+    "title": "Remote network Jaipur-Branch-01: certificate expiring",
+    "severity": "low",
+    "status": "new",
+    "createdAt": "2026-10-05T11:48:46.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Jaipur-Branch-01"
+      ],
+      "ips": [
+        "203.0.113.100"
+      ]
+    },
+    "summary": "Device certificate expires in 29 days."
+  },
+  {
+    "id": "ALR-1035",
+    "title": "Repeated GlobalProtect login failures for laxmi.nehru@acme.io",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T11:21:58.000Z",
+    "source": "GlobalProtect",
+    "category": "access",
+    "entities": {
+      "users": [
+        "laxmi.nehru@acme.io"
+      ],
+      "ips": [
+        "10.20.31.216"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Password expired. User reset it and reconnected."
+  },
+  {
+    "id": "ALR-1039",
+    "title": "Duplicate: Mumbai-HQ-01 tunnel flapping",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T11:17:10.000Z",
+    "source": "Remote network monitor",
+    "category": "connectivity",
+    "entities": {
+      "sites": [
+        "Mumbai-HQ-01"
+      ],
+      "ips": [
+        "203.0.113.20"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Duplicate of an open alert. Merged."
+  },
+  {
+    "id": "ALR-1050",
+    "title": "Zoom blocked for vasudeva.varman@acme.io",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T11:07:42.000Z",
+    "source": "URL filtering",
+    "category": "policy",
+    "entities": {
+      "users": [
+        "vasudeva.varman@acme.io"
+      ],
+      "ips": [
+        "10.62.0.96"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Browser extension was hitting a blocked category. Extension removed."
+  },
+  {
+    "id": "ALR-1046",
+    "title": "Slow Microsoft 365 for Trilokesh Nambeesan",
+    "severity": "low",
+    "status": "investigating",
+    "createdAt": "2026-10-05T10:41:20.000Z",
+    "source": "Helpdesk INC-88176",
+    "category": "access",
+    "entities": {
+      "users": [
+        "trilokesh.nambeesan@acme.io"
+      ],
+      "ips": [
+        "10.63.0.64"
+      ]
+    },
+    "assignee": "Priya Nair",
+    "summary": "Latency reports from Delhi. Checking gateway load."
+  },
+  {
+    "id": "ALR-1040",
+    "title": "Paramartha Guha cannot reach internal wiki",
+    "severity": "low",
+    "status": "resolved",
+    "createdAt": "2026-10-05T10:17:04.000Z",
+    "source": "Helpdesk INC-88121",
+    "category": "access",
+    "entities": {
+      "users": [
+        "paramartha.guha@acme.io"
+      ],
+      "ips": [
+        "10.62.0.124"
+      ]
+    },
+    "assignee": "Meera Iyer",
+    "summary": "Stale DNS cache on the laptop. Cleared and confirmed."
+  }
+]

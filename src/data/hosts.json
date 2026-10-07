@@ -1,0 +1,202 @@
+[
+  {
+    "id": "HOST-01",
+    "hostname": "prod-api-03",
+    "ip": "10.40.2.11",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-02",
+    "hostname": "prod-api-05",
+    "ip": "10.40.2.13",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-03",
+    "hostname": "prod-api-07",
+    "ip": "10.40.2.15",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-04",
+    "hostname": "prod-web-02",
+    "ip": "10.40.1.22",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Amazon Linux 2023"
+  },
+  {
+    "id": "HOST-05",
+    "hostname": "prod-web-04",
+    "ip": "10.40.1.24",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Amazon Linux 2023"
+  },
+  {
+    "id": "HOST-06",
+    "hostname": "prod-db-01",
+    "ip": "10.40.3.5",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-07",
+    "hostname": "prod-db-02",
+    "ip": "10.40.3.6",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-08",
+    "hostname": "prod-worker-11",
+    "ip": "10.40.4.31",
+    "role": "workload",
+    "environment": "prod",
+    "location": "Mumbai",
+    "via": "SC-AWS-Mumbai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-09",
+    "hostname": "stg-api-02",
+    "ip": "10.50.2.12",
+    "role": "workload",
+    "environment": "staging",
+    "location": "Pune",
+    "via": "SC-Azure-Pune",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-10",
+    "hostname": "stg-web-01",
+    "ip": "10.50.1.21",
+    "role": "workload",
+    "environment": "staging",
+    "location": "Pune",
+    "via": "SC-Azure-Pune",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-11",
+    "hostname": "ci-runner-03",
+    "ip": "10.50.5.43",
+    "role": "workload",
+    "environment": "staging",
+    "location": "Pune",
+    "via": "SC-Azure-Pune",
+    "os": "Ubuntu 24.04"
+  },
+  {
+    "id": "HOST-12",
+    "hostname": "jump-host-01",
+    "ip": "10.10.1.5",
+    "role": "server",
+    "environment": "corp",
+    "location": "Chennai",
+    "via": "SC-DC-Chennai",
+    "os": "Ubuntu 22.04"
+  },
+  {
+    "id": "HOST-13",
+    "hostname": "ad-dc-01",
+    "ip": "10.10.1.10",
+    "role": "server",
+    "environment": "corp",
+    "location": "Chennai",
+    "via": "SC-DC-Chennai",
+    "os": "Windows Server 2022"
+  },
+  {
+    "id": "HOST-14",
+    "hostname": "ad-dc-02",
+    "ip": "10.10.1.11",
+    "role": "server",
+    "environment": "corp",
+    "location": "Chennai",
+    "via": "SC-DC-Chennai",
+    "os": "Windows Server 2022"
+  },
+  {
+    "id": "HOST-15",
+    "hostname": "file-srv-01",
+    "ip": "10.10.2.20",
+    "role": "server",
+    "environment": "corp",
+    "location": "Chennai",
+    "via": "SC-DC-Chennai",
+    "os": "Windows Server 2019"
+  },
+  {
+    "id": "HOST-16",
+    "hostname": "print-srv-01",
+    "ip": "10.10.2.40",
+    "role": "server",
+    "environment": "corp",
+    "location": "Chennai",
+    "via": "SC-DC-Chennai",
+    "os": "Windows Server 2019"
+  },
+  {
+    "id": "HOST-17",
+    "hostname": "pune-fw-01",
+    "ip": "203.0.113.10",
+    "role": "firewall",
+    "environment": "corp",
+    "location": "Pune",
+    "via": "Pune-Branch-01",
+    "os": "PAN-OS 11.1"
+  },
+  {
+    "id": "HOST-18",
+    "hostname": "chennai-fw-01",
+    "ip": "203.0.113.40",
+    "role": "firewall",
+    "environment": "corp",
+    "location": "Chennai",
+    "via": "Chennai-Branch-01",
+    "os": "PAN-OS 11.1"
+  },
+  {
+    "id": "HOST-19",
+    "hostname": "hyderabad-fw-01",
+    "ip": "203.0.113.50",
+    "role": "firewall",
+    "environment": "corp",
+    "location": "Hyderabad",
+    "via": "Hyderabad-Branch-01",
+    "os": "PAN-OS 11.1"
+  },
+  {
+    "id": "HOST-20",
+    "hostname": "delhi-fw-01",
+    "ip": "203.0.113.60",
+    "role": "firewall",
+    "environment": "corp",
+    "location": "Delhi",
+    "via": "Delhi-Branch-01",
+    "os": "PAN-OS 11.1"
+  }
+]
