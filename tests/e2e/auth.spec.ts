@@ -96,7 +96,7 @@ test.describe("Phase 2 splash and login", () => {
     await page.getByTestId("sign-in").click();
 
     await expect(page).toHaveURL(/\/tickets\/TKT-24817$/, { timeout: 5000 });
-    await expect(page.getByRole("heading", { name: "Ticket workspace" })).toBeVisible();
-    await expect(page.getByText("/tickets/TKT-24817")).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace")).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace-title")).toHaveText("TKT-24817");
   });
 });

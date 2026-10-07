@@ -10,7 +10,7 @@ import { homeCopy } from "@/content/home";
 
 export function HomePage() {
   return (
-    <div className="px-5 py-4" data-testid="home-page">
+    <div className="h-full overflow-auto px-5 py-4" data-testid="home-page">
       <div className="mb-3">
         <h1 className="text-lg font-medium tracking-tight text-text">
           {homeCopy.pageTitle}

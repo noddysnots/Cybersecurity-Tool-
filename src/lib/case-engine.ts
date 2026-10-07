@@ -6,6 +6,7 @@ import {
   CASE_2_CONVERSATION,
   getConversation,
 } from "@/content/conversations";
+import { questionsForCase } from "@/content/questions";
 import { now } from "@/lib/time";
 import type {
   CaseKey,
@@ -29,6 +30,7 @@ export interface TicketCaseState {
   status: TicketStatus;
   step: PlaybookStep;
   answeredQuestions: string[];
+  pendingQuestions: string[];
   keyFindings: string[];
   pinnedEvidence: Evidence[];
   thread: Message[];
@@ -49,12 +51,17 @@ export interface TicketCaseState {
 
 export interface CaseEngineState {
   tickets: Record<CaseTicketId, TicketCaseState>;
+  acknowledge: (ticketId: CaseTicketId, body: string) => void;
   askQuestion: (ticketId: CaseTicketId, questionId: string) => void;
   askAllQuestions: (ticketId: CaseTicketId, questionIds: string[]) => void;
+  deliverAnswer: (ticketId: CaseTicketId, questionId: string) => void;
+  deliverPendingAnswers: (ticketId: CaseTicketId) => void;
   markKeyFinding: (ticketId: CaseTicketId, questionId: string) => void;
   pinEvidence: (ticketId: CaseTicketId, evidence: Omit<Evidence, "ticketId" | "pinnedAt">) => void;
   unpinEvidence: (ticketId: CaseTicketId, evidenceId: string) => void;
   setStep: (ticketId: CaseTicketId, step: PlaybookStep) => void;
+  setStatus: (ticketId: CaseTicketId, status: TicketStatus) => void;
+  postReply: (ticketId: CaseTicketId, body: string, internal?: boolean) => void;
   requestApproval: (ticketId: CaseTicketId) => void;
   receiveApproval: (ticketId: CaseTicketId) => void;
   applyFix: (ticketId: CaseTicketId) => void;
@@ -97,6 +104,7 @@ function initialTicket(caseKey: CaseKey): TicketCaseState {
     status: "open",
     step: "intake",
     answeredQuestions: [],
+    pendingQuestions: [],
     keyFindings: [],
     pinnedEvidence: [],
     thread: intakeThread(caseKey, ticketId),
@@ -114,6 +122,17 @@ function createInitialTickets(): Record<CaseTicketId, TicketCaseState> {
   return {
     "TKT-24817": initialTicket("meet-quic"),
     "TKT-24823": initialTicket("pune-tunnel"),
+  };
+}
+
+function normalizeTicket(ticket: TicketCaseState): TicketCaseState {
+  return {
+    ...ticket,
+    pendingQuestions: ticket.pendingQuestions ?? [],
+    answeredQuestions: ticket.answeredQuestions ?? [],
+    keyFindings: ticket.keyFindings ?? [],
+    pinnedEvidence: ticket.pinnedEvidence ?? [],
+    thread: ticket.thread ?? [],
   };
 }
 
@@ -161,20 +180,23 @@ function withTicket(
 ): Record<CaseTicketId, TicketCaseState> {
   return {
     ...tickets,
-    [ticketId]: updater(tickets[ticketId]),
+    [ticketId]: updater(normalizeTicket(tickets[ticketId])),
   };
 }
 
-function appendCustomerReply(
+function questionLabel(caseKey: CaseKey, questionId: string): string {
+  const found = questionsForCase(caseKey).find((q) => q.id === questionId);
+  return found?.label ?? questionId.replaceAll("_", " ");
+}
+
+function postAsk(
   state: TicketCaseState,
   questionId: string,
 ): TicketCaseState {
-  if (state.answeredQuestions.includes(questionId)) {
-    return state;
-  }
-  const script = getConversation(state.caseKey);
-  const body = script.questions[questionId];
-  if (!body) {
+  if (
+    state.answeredQuestions.includes(questionId) ||
+    state.pendingQuestions.includes(questionId)
+  ) {
     return state;
   }
   const ask: Message = {
@@ -182,11 +204,68 @@ function appendCustomerReply(
     ticketId: state.ticketId,
     author: "engineer",
     authorName: "Priya Nair",
-    body: `Scoping: ${questionId.replaceAll("_", " ")}`,
+    body: questionLabel(state.caseKey, questionId),
     createdAt: isoNow(),
     kind: "scope-ask",
     questionId,
   };
+  return {
+    ...state,
+    status: "pending_customer",
+    pendingQuestions: [...state.pendingQuestions, questionId],
+    thread: [...state.thread, ask],
+  };
+}
+
+function postAskAll(
+  state: TicketCaseState,
+  questionIds: string[],
+): TicketCaseState {
+  const pending = questionIds.filter(
+    (id) =>
+      !state.answeredQuestions.includes(id) && !state.pendingQuestions.includes(id),
+  );
+  if (pending.length === 0) {
+    return state;
+  }
+  const lines = pending.map(
+    (id, index) => `${index + 1}. ${questionLabel(state.caseKey, id)}`,
+  );
+  const ask: Message = {
+    id: msgId("ask-all"),
+    ticketId: state.ticketId,
+    author: "engineer",
+    authorName: "Priya Nair",
+    body: `To scope this issue, please answer the following:\n\n${lines.join("\n")}`,
+    createdAt: isoNow(),
+    kind: "scope-ask",
+  };
+  return {
+    ...state,
+    status: "pending_customer",
+    pendingQuestions: [...state.pendingQuestions, ...pending],
+    thread: [...state.thread, ask],
+  };
+}
+
+function deliverOne(
+  state: TicketCaseState,
+  questionId: string,
+): TicketCaseState {
+  if (state.answeredQuestions.includes(questionId)) {
+    return state;
+  }
+  if (!state.pendingQuestions.includes(questionId)) {
+    return state;
+  }
+  const script = getConversation(state.caseKey);
+  const body = script.questions[questionId];
+  if (!body) {
+    return {
+      ...state,
+      pendingQuestions: state.pendingQuestions.filter((id) => id !== questionId),
+    };
+  }
   const reply: Message = {
     id: msgId("reply"),
     ticketId: state.ticketId,
@@ -197,11 +276,13 @@ function appendCustomerReply(
     kind: "scope-reply",
     questionId,
   };
+  const pendingQuestions = state.pendingQuestions.filter((id) => id !== questionId);
   return {
     ...state,
-    status: state.status === "open" ? "in_progress" : state.status,
     answeredQuestions: [...state.answeredQuestions, questionId],
-    thread: [...state.thread, ask, reply],
+    pendingQuestions,
+    status: pendingQuestions.length > 0 ? "pending_customer" : "in_progress",
+    thread: [...state.thread, reply],
   };
 }
 
@@ -210,10 +291,37 @@ export const useCaseEngine = create<CaseEngineState>()(
     (set, get) => ({
       tickets: createInitialTickets(),
 
+      acknowledge(ticketId, body) {
+        const trimmed = body.trim();
+        if (!trimmed) return;
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.thread.some((m) => m.kind === "acknowledge")) {
+              return current;
+            }
+            const message: Message = {
+              id: msgId("ack"),
+              ticketId,
+              author: "engineer",
+              authorName: "Priya Nair",
+              body: trimmed,
+              createdAt: isoNow(),
+              kind: "acknowledge",
+            };
+            return {
+              ...current,
+              status: "in_progress",
+              step: "scope",
+              thread: [...current.thread, message],
+            };
+          }),
+        }));
+      },
+
       askQuestion(ticketId, questionId) {
         set((state) => ({
           tickets: withTicket(state.tickets, ticketId, (current) =>
-            appendCustomerReply(current, questionId),
+            postAsk(current, questionId),
           ),
         }));
       },
@@ -221,8 +329,24 @@ export const useCaseEngine = create<CaseEngineState>()(
       askAllQuestions(ticketId, questionIds) {
         set((state) => ({
           tickets: withTicket(state.tickets, ticketId, (current) =>
-            questionIds.reduce(
-              (acc, questionId) => appendCustomerReply(acc, questionId),
+            postAskAll(current, questionIds),
+          ),
+        }));
+      },
+
+      deliverAnswer(ticketId, questionId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) =>
+            deliverOne(current, questionId),
+          ),
+        }));
+      },
+
+      deliverPendingAnswers(ticketId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) =>
+            current.pendingQuestions.reduce(
+              (acc, questionId) => deliverOne(acc, questionId),
               current,
             ),
           ),
@@ -277,6 +401,41 @@ export const useCaseEngine = create<CaseEngineState>()(
             ...current,
             step,
           })),
+        }));
+      },
+
+      setStatus(ticketId, status) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => ({
+            ...current,
+            status,
+          })),
+        }));
+      },
+
+      postReply(ticketId, body, internal = false) {
+        const trimmed = body.trim();
+        if (!trimmed) return;
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            const message: Message = {
+              id: msgId(internal ? "note" : "reply"),
+              ticketId,
+              author: "engineer",
+              authorName: "Priya Nair",
+              body: trimmed,
+              createdAt: isoNow(),
+              kind: internal ? "note" : "reply",
+            };
+            return {
+              ...current,
+              status:
+                internal || current.status === "resolved" || current.status === "closed"
+                  ? current.status
+                  : "pending_customer",
+              thread: [...current.thread, message],
+            };
+          }),
         }));
       },
 
@@ -371,7 +530,7 @@ export const useCaseEngine = create<CaseEngineState>()(
       },
 
       verify(ticketId) {
-        const current = get().tickets[ticketId];
+        const current = normalizeTicket(get().tickets[ticketId]);
         if (!current.fixApplied) {
           return { ok: false, reason: "Cannot verify before the fix is applied." };
         }
@@ -440,7 +599,7 @@ export const useCaseEngine = create<CaseEngineState>()(
       },
 
       closeTicket(ticketId) {
-        const current = get().tickets[ticketId];
+        const current = normalizeTicket(get().tickets[ticketId]);
         if (!current.customerConfirmed) {
           return { ok: false, reason: "Cannot close before the customer confirms." };
         }
@@ -467,6 +626,24 @@ export const useCaseEngine = create<CaseEngineState>()(
     {
       name: "triage-case-engine",
       storage: createJSONStorage(() => safeStorage()),
+      merge: (persisted, current) => {
+        const p = persisted as Partial<CaseEngineState> | undefined;
+        if (!p?.tickets) return current;
+        return {
+          ...current,
+          ...p,
+          tickets: {
+            "TKT-24817": normalizeTicket({
+              ...current.tickets["TKT-24817"],
+              ...p.tickets["TKT-24817"],
+            }),
+            "TKT-24823": normalizeTicket({
+              ...current.tickets["TKT-24823"],
+              ...p.tickets["TKT-24823"],
+            }),
+          },
+        };
+      },
     },
   ),
 );
@@ -533,7 +710,7 @@ export function getTicketCase(
   state: Pick<CaseEngineState, "tickets">,
   ticketId: CaseTicketId,
 ): TicketCaseState {
-  return state.tickets[ticketId];
+  return normalizeTicket(state.tickets[ticketId]);
 }
 
 export const CASE_1_SCRIPT = CASE_1_CONVERSATION;

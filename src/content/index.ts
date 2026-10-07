@@ -11,3 +11,11 @@ export {
   type CaseConversationScript,
   type ConversationEventKey,
 } from "./conversations";
+export { ticketsCopy } from "./tickets";
+export { workspaceCopy, PLAYBOOK_STEP_META } from "./workspace";
+export {
+  HISTORY_TICKETS,
+  getHistoryTicket,
+  type HistoryRca,
+  type HistoryTicketDetail,
+} from "./history";

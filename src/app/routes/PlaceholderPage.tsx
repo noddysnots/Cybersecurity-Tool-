@@ -130,7 +130,7 @@ export function PlaceholderPage({
   const summary = seedSummary(path);
 
   return (
-    <div className="px-6 py-6 text-text" data-testid={`page-${title.toLowerCase().replaceAll(" ", "-")}`}>
+    <div className="h-full overflow-auto px-6 py-6 text-text" data-testid={`page-${title.toLowerCase().replaceAll(" ", "-")}`}>
       <div className="mx-auto flex max-w-3xl flex-col gap-5 rounded-[var(--radius-panel)] border border-border bg-surface-1 p-6">
         <div className="flex flex-col gap-2">
           <p className="text-sm text-text-muted">Triage Console</p>

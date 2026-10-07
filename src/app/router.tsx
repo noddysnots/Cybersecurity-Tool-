@@ -7,7 +7,8 @@ import { LoginPage } from "@/app/routes/LoginPage";
 import { NotFoundPage } from "@/app/routes/NotFoundPage";
 import { PlaceholderPage } from "@/app/routes/PlaceholderPage";
 import { SplashPage } from "@/app/routes/SplashPage";
-import { TicketPlaceholderPage } from "@/app/routes/TicketPlaceholderPage";
+import { TicketsPage } from "@/app/routes/TicketsPage";
+import { TicketWorkspacePage } from "@/app/routes/TicketWorkspacePage";
 import { AppShell } from "@/components/shell";
 
 export const router = createBrowserRouter([
@@ -37,11 +38,7 @@ export const router = createBrowserRouter([
             path: "/tickets",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Tickets"
-                  path="/tickets"
-                  description="Ticket card grid and table arrive in Phase 4."
-                />
+                <TicketsPage />
               </ErrorBoundary>
             ),
           },
@@ -49,7 +46,7 @@ export const router = createBrowserRouter([
             path: "/tickets/:id",
             element: (
               <ErrorBoundary>
-                <TicketPlaceholderPage />
+                <TicketWorkspacePage />
               </ErrorBoundary>
             ),
           },

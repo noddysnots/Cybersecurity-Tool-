@@ -8,7 +8,8 @@ Source of truth: PLAN.md, CURSOR_PROMPTS.md, .cursor/rules/project.mdc (installe
 - Phase 1: complete
 - Phase 2: complete
 - Phase 3: complete
-- Next: Phase 4 tickets and workspace frame
+- Phase 4: complete
+- Next: Phase 5 evidence, logs explorer, compare, reproduce
 
 ## Assumptions / defaults
 - Fresh Vite SPA wipe of Next app on branch v2.
@@ -22,3 +23,4 @@ Source of truth: PLAN.md, CURSOR_PROMPTS.md, .cursor/rules/project.mdc (installe
 - Phase 1: types, seeded JSON (fixed seed), hand-written Case 1/2 needles, content scripts, case-engine zustand, unit tests. lint/typecheck/test/build/e2e passed (14 unit, 3 e2e).
 - Phase 2: developer splash (canvas mesh, skip, once per session, reduced motion), login split with labeled network (Pune amber pulse), demo auth + route guard with return path. Screenshots reviewed: splash-mid, splash-final, login, login-error. lint/typecheck/test/build/e2e passed (16 unit, 8 e2e).
 - Phase 3: App shell (collapsible nav, top bar, Cmd+K palette, demo clock IST/UTC, Guide/Annotations toggles, notifications, user menu Reset demo + Sign out, Ctrl+` console placeholder). Home 12-col grid from seeded data + case engine (SLA rings, Pune down, CHG-5120/CHG-4471, stun spike, traffic cliff, alerts). Tile links apply filters. Screenshots reviewed: home.png. lint/typecheck/test/build/e2e passed (23 unit, 11 e2e).
+- Phase 4: Tickets grid/table with tabs and live SLA rings (2 workable + 10 history). Ticket workspace per 6.6 (header, playbook rail, step panel, thread, evidence, reply templates). Intake + Scope fully wired through case-engine (acknowledge, ask/ask-all, typing delay, deliver scripted replies, key findings, live Scope summary, unlock reasons). History tickets read-only with RCA. Unknown id designed not-found. Dead placeholder left: `src/app/routes/TicketPlaceholderPage.tsx` (unused). Screenshots reviewed: tickets-grid, workspace-intake, workspace-scope. lint/typecheck/test/build/e2e passed (25 unit, 15 e2e).

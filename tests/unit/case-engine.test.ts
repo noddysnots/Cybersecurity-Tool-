@@ -8,6 +8,7 @@ import {
   selectVerifyPasses,
   useCaseEngine,
 } from "@/lib/case-engine";
+import { getPlaybookGates, scopeUnlocksEvidence } from "@/lib/playbook";
 
 describe("case engine", () => {
   beforeEach(() => {
@@ -31,13 +32,46 @@ describe("case engine", () => {
     );
   });
 
-  it("records scoped answers from the conversation script", () => {
+  it("acknowledge moves to scope with first response", () => {
     const engine = useCaseEngine.getState();
+    engine.acknowledge("TKT-24817", "Thanks, we are looking into this now.");
+    const ticket = useCaseEngine.getState().tickets["TKT-24817"];
+    expect(ticket.status).toBe("in_progress");
+    expect(ticket.step).toBe("scope");
+    expect(ticket.thread.some((m) => m.kind === "acknowledge")).toBe(true);
+    expect(getPlaybookGates(ticket).scope.unlocked).toBe(true);
+  });
+
+  it("records scoped answers from the conversation script after delivery", () => {
+    const engine = useCaseEngine.getState();
+    engine.acknowledge("TKT-24817", "Thanks, we are looking into this now.");
     engine.askQuestion("TKT-24817", "changes");
+    expect(useCaseEngine.getState().tickets["TKT-24817"].pendingQuestions).toContain(
+      "changes",
+    );
+    expect(useCaseEngine.getState().tickets["TKT-24817"].status).toBe("pending_customer");
+    engine.deliverAnswer("TKT-24817", "changes");
     const ticket = useCaseEngine.getState().tickets["TKT-24817"];
     expect(ticket.answeredQuestions).toContain("changes");
+    expect(ticket.pendingQuestions).not.toContain("changes");
     expect(ticket.thread.some((m) => m.body.includes("CHG-5120"))).toBe(true);
     expect(ticket.status).toBe("in_progress");
+  });
+
+  it("unlocks evidence only after When and Who are answered", () => {
+    const engine = useCaseEngine.getState();
+    engine.acknowledge("TKT-24817", "Thanks, we are looking into this now.");
+    engine.askQuestion("TKT-24817", "when");
+    engine.deliverAnswer("TKT-24817", "when");
+    expect(scopeUnlocksEvidence(useCaseEngine.getState().tickets["TKT-24817"])).toBe(
+      false,
+    );
+    engine.askQuestion("TKT-24817", "who");
+    engine.deliverAnswer("TKT-24817", "who");
+    const ticket = useCaseEngine.getState().tickets["TKT-24817"];
+    expect(scopeUnlocksEvidence(ticket)).toBe(true);
+    expect(getPlaybookGates(ticket).evidence.unlocked).toBe(true);
+    expect(getPlaybookGates(ticket).evidence.reason).toContain("Phase 5");
   });
 
   it("Case 1: cannot verify before fix, cannot close before confirm", () => {
@@ -48,10 +82,12 @@ describe("case engine", () => {
     });
     expect(selectVerifyPasses(useCaseEngine.getState(), "TKT-24817")).toBe(false);
 
+    engine.acknowledge("TKT-24817", "Thanks, we are looking into this now.");
     engine.askAllQuestions(
       "TKT-24817",
       SCOPE_QUESTIONS.map((q) => q.id),
     );
+    engine.deliverPendingAnswers("TKT-24817");
     engine.requestApproval("TKT-24817");
     engine.receiveApproval("TKT-24817");
     expect(

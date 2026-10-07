@@ -10,7 +10,7 @@ const screensDir = path.join(__dirname, "screens");
 const protectedRoutes: { path: string; name: string; heading: string }[] = [
   { path: "/home", name: "home", heading: "Home" },
   { path: "/tickets", name: "tickets", heading: "Tickets" },
-  { path: "/tickets/TKT-24817", name: "ticket-detail", heading: "Ticket workspace" },
+  { path: "/tickets/TKT-24817", name: "ticket-detail", heading: "Intake" },
   { path: "/logs", name: "logs", heading: "Logs" },
   { path: "/policies", name: "policies", heading: "Policies" },
   { path: "/objects", name: "objects", heading: "Objects" },
@@ -85,11 +85,13 @@ test.describe("Phase 0 smoke", () => {
     await signInAsAdmin(page);
 
     await page.goto("/tickets/TKT-24817", { waitUntil: "networkidle" });
-    await expect(page.getByRole("heading", { name: "Ticket workspace" })).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace")).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace-title")).toHaveText("TKT-24817");
     await expect(page.getByText("Page not found")).toHaveCount(0);
 
     await page.reload({ waitUntil: "networkidle" });
-    await expect(page.getByRole("heading", { name: "Ticket workspace" })).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace")).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace-title")).toHaveText("TKT-24817");
     await expect(page.getByText("Page not found")).toHaveCount(0);
 
     await page.screenshot({

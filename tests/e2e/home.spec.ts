@@ -98,6 +98,7 @@ test.describe("Phase 3 shell and home", () => {
     await page.getByTestId("command-palette-input").fill("TKT-24817");
     await page.getByTestId("palette-ticket-TKT-24817").click();
     await expect(page).toHaveURL(/\/tickets\/TKT-24817$/);
-    await expect(page.getByRole("heading", { name: "Ticket workspace" })).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace")).toBeVisible();
+    await expect(page.getByTestId("ticket-workspace-title")).toHaveText("TKT-24817");
   });
 });

@@ -57,6 +57,8 @@ export interface Ticket {
 export type MessageAuthor = "customer" | "engineer" | "system";
 export type MessageKind =
   | "intake"
+  | "acknowledge"
+  | "reply"
   | "scope-ask"
   | "scope-reply"
   | "approval-request"
