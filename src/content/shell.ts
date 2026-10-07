@@ -18,8 +18,7 @@ export const shellCopy = {
   collapseNav: "Collapse navigation",
   expandNav: "Expand navigation",
   consoleTitle: "Console",
-  consolePlaceholder:
-    "Prisma diagnostics and branch CLI arrive in Phase 6. Press Ctrl+` to close.",
+  consolePlaceholder: "Type a command. Tab completes. ? lists commands.",
   consoleHint: "Ctrl+`",
   narrowScreen:
     "Triage Console is designed for a larger screen. Use 1280px width or above for the full mission control layout.",

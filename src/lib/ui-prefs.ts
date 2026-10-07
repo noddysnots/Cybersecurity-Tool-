@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import type { ConsoleMode } from "@/lib/console";
 import type { TimeZoneMode } from "@/lib/time";
 
 function safeStorage(): Storage {
@@ -46,6 +47,9 @@ type UiPrefsState = {
   guideEnabled: boolean;
   annotationsEnabled: boolean;
   consoleOpen: boolean;
+  consoleMode: ConsoleMode;
+  consoleHeight: number;
+  consoleSeed: string | null;
   paletteOpen: boolean;
   setNavCollapsed: (value: boolean) => void;
   toggleNav: () => void;
@@ -55,6 +59,9 @@ type UiPrefsState = {
   setAnnotationsEnabled: (value: boolean) => void;
   setConsoleOpen: (value: boolean) => void;
   toggleConsole: () => void;
+  setConsoleMode: (mode: ConsoleMode) => void;
+  setConsoleHeight: (height: number) => void;
+  setConsoleSeed: (command: string | null) => void;
   setPaletteOpen: (value: boolean) => void;
 };
 
@@ -66,6 +73,9 @@ export const useUiPrefs = create<UiPrefsState>()(
       guideEnabled: true,
       annotationsEnabled: false,
       consoleOpen: false,
+      consoleMode: "prisma",
+      consoleHeight: 260,
+      consoleSeed: null,
       paletteOpen: false,
       setNavCollapsed: (value) => set({ navCollapsed: value }),
       toggleNav: () => set({ navCollapsed: !get().navCollapsed }),
@@ -76,6 +86,10 @@ export const useUiPrefs = create<UiPrefsState>()(
       setAnnotationsEnabled: (value) => set({ annotationsEnabled: value }),
       setConsoleOpen: (value) => set({ consoleOpen: value }),
       toggleConsole: () => set({ consoleOpen: !get().consoleOpen }),
+      setConsoleMode: (mode) => set({ consoleMode: mode }),
+      setConsoleHeight: (height) =>
+        set({ consoleHeight: Math.min(480, Math.max(160, height)) }),
+      setConsoleSeed: (command) => set({ consoleSeed: command }),
       setPaletteOpen: (value) => set({ paletteOpen: value }),
     }),
     {

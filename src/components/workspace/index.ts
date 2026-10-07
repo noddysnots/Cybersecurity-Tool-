@@ -4,6 +4,7 @@ export { EvidenceStep } from "./EvidenceStep";
 export { HistoryRca } from "./HistoryRca";
 export { IntakeStep } from "./IntakeStep";
 export { PlaybookRail } from "./PlaybookRail";
+export { ProveStep } from "./ProveStep";
 export { ReplyBox } from "./ReplyBox";
 export { ReproduceStep } from "./ReproduceStep";
 export { ScopeStep } from "./ScopeStep";

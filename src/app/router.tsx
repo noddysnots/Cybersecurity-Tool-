@@ -10,6 +10,7 @@ import { PlaceholderPage } from "@/app/routes/PlaceholderPage";
 import { SplashPage } from "@/app/routes/SplashPage";
 import { TicketsPage } from "@/app/routes/TicketsPage";
 import { TicketWorkspacePage } from "@/app/routes/TicketWorkspacePage";
+import { TroubleshootingPage } from "@/app/routes/TroubleshootingPage";
 import { AppShell } from "@/components/shell";
 
 export const router = createBrowserRouter([
@@ -123,11 +124,7 @@ export const router = createBrowserRouter([
             path: "/troubleshooting",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Troubleshooting"
-                  path="/troubleshooting"
-                  description="Policy match, ping, traceroute, and tunnel tools arrive in Phase 6."
-                />
+                <TroubleshootingPage />
               </ErrorBoundary>
             ),
           },

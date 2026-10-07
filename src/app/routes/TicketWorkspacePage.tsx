@@ -9,6 +9,7 @@ import {
   HistoryRca,
   IntakeStep,
   PlaybookRail,
+  ProveStep,
   ReplyBox,
   ReproduceStep,
   ScopeStep,
@@ -92,6 +93,7 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
   const completeEvidence = useCaseEngine((s) => s.completeEvidence);
   const completeCompare = useCaseEngine((s) => s.completeCompare);
   const askReproduceRetry = useCaseEngine((s) => s.askReproduceRetry);
+  const completeProve = useCaseEngine((s) => s.completeProve);
   const setStep = useCaseEngine((s) => s.setStep);
   const setStatus = useCaseEngine((s) => s.setStatus);
   const postReply = useCaseEngine((s) => s.postReply);
@@ -214,6 +216,20 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
             state={caseState}
             onAskRetry={(body) => askReproduceRetry(ticketId, body)}
             onPin={(evidence) => pinEvidence(ticketId, evidence)}
+          />
+        );
+      case "prove":
+        return (
+          <ProveStep
+            ticketId={ticketId}
+            state={caseState}
+            onPin={(evidence) => {
+              pinEvidence(ticketId, evidence);
+              completeProve(ticketId);
+            }}
+            onContinue={() => {
+              completeProve(ticketId);
+            }}
           />
         );
       default:

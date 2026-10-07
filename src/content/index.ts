@@ -14,6 +14,7 @@ export {
 export { ticketsCopy } from "./tickets";
 export { workspaceCopy, PLAYBOOK_STEP_META } from "./workspace";
 export { logsCopy } from "./logs";
+export { consoleCopy, toolsCopy, proveCopy } from "./console";
 export {
   HISTORY_TICKETS,
   getHistoryTicket,

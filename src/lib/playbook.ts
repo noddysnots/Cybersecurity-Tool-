@@ -23,6 +23,7 @@ export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, S
   const evidenceDone = state.evidenceComplete;
   const compareDone = state.compareComplete;
   const reproduceDone = state.reproduceComplete;
+  const proveDone = state.proveComplete;
 
   const gates: Record<PlaybookStep, StepGate> = {
     intake: {
@@ -67,9 +68,13 @@ export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, S
         : "Complete Compare to unlock Reproduce.",
     },
     prove: {
-      unlocked: false,
-      done: false,
-      reason: "Prove tools arrive in Phase 6.",
+      unlocked: reproduceDone,
+      done: proveDone,
+      reason: reproduceDone
+        ? proveDone
+          ? "Hypothesis proven."
+          : "Run policy match or branch CLI to prove the cause."
+        : "Complete Reproduce to unlock Prove.",
     },
     fix: {
       unlocked: false,
@@ -113,6 +118,7 @@ const SELECTABLE_WHEN_UNLOCKED: PlaybookStep[] = [
   "evidence",
   "isolate",
   "reproduce",
+  "prove",
 ];
 
 export function canSelectStep(state: TicketCaseState, step: PlaybookStep): boolean {

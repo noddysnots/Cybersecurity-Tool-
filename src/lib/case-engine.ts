@@ -38,6 +38,7 @@ export interface TicketCaseState {
   compareComplete: boolean;
   reproduceStarted: boolean;
   reproduceComplete: boolean;
+  proveComplete: boolean;
   approvalRequested: boolean;
   approvalGranted: boolean;
   fixApplied: boolean;
@@ -67,6 +68,7 @@ export interface CaseEngineState {
   completeCompare: (ticketId: CaseTicketId) => void;
   askReproduceRetry: (ticketId: CaseTicketId, body: string) => void;
   completeReproduce: (ticketId: CaseTicketId) => void;
+  completeProve: (ticketId: CaseTicketId) => void;
   setStep: (ticketId: CaseTicketId, step: PlaybookStep) => void;
   setStatus: (ticketId: CaseTicketId, status: TicketStatus) => void;
   postReply: (ticketId: CaseTicketId, body: string, internal?: boolean) => void;
@@ -120,6 +122,7 @@ function initialTicket(caseKey: CaseKey): TicketCaseState {
     compareComplete: false,
     reproduceStarted: false,
     reproduceComplete: false,
+    proveComplete: false,
     approvalRequested: false,
     approvalGranted: false,
     fixApplied: false,
@@ -149,6 +152,7 @@ function normalizeTicket(ticket: TicketCaseState): TicketCaseState {
     compareComplete: ticket.compareComplete ?? false,
     reproduceStarted: ticket.reproduceStarted ?? false,
     reproduceComplete: ticket.reproduceComplete ?? false,
+    proveComplete: ticket.proveComplete ?? false,
   };
 }
 
@@ -463,6 +467,15 @@ export const useCaseEngine = create<CaseEngineState>()(
           tickets: withTicket(state.tickets, ticketId, (current) => ({
             ...current,
             reproduceComplete: true,
+          })),
+        }));
+      },
+
+      completeProve(ticketId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => ({
+            ...current,
+            proveComplete: true,
           })),
         }));
       },
