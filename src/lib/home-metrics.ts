@@ -225,19 +225,25 @@ export function getPuneTrafficTrend(): TrafficPoint[] {
   const endUtc = Date.parse("2026-10-06T07:00:00.000Z");
   const bucketMs = 15 * 60_000;
   const points: TrafficPoint[] = [];
+  const puneFixed = selectPuneTunnelStatus(useCaseEngine.getState()) === "up";
+  const dropAt = Date.parse("2026-10-06T06:12:00.000Z"); // 11:42 IST
+  // After fix, resume from demo clock bucket (12:00 IST = 06:30 UTC).
+  const resumeAt = Date.parse("2026-10-06T06:30:00.000Z");
 
   for (let t = startUtc; t < endUtc; t += bucketMs) {
     const ist = new Date(t + 5.5 * 3_600_000);
     const istHour = ist.getUTCHours();
     const istMinute = ist.getUTCMinutes();
-    const dropAt = Date.parse("2026-10-06T06:12:00.000Z"); // 11:42 IST
-    const count =
-      t >= dropAt
-        ? 0
-        : traffic.filter((row) => {
-            const rt = Date.parse(row.receiveTime);
-            return rt >= t && rt < t + bucketMs;
-          }).length;
+    const natural = traffic.filter((row) => {
+      const rt = Date.parse(row.receiveTime);
+      return rt >= t && rt < t + bucketMs;
+    }).length;
+    let count = natural;
+    if (t >= dropAt && !(puneFixed && t >= resumeAt)) {
+      count = 0;
+    } else if (puneFixed && t >= resumeAt) {
+      count = Math.max(natural, 4);
+    }
     const label = `${String(istHour).padStart(2, "0")}:${String(istMinute).padStart(2, "0")}`;
     points.push({
       label,
@@ -259,7 +265,11 @@ export function getPuneTrafficTrend(): TrafficPoint[] {
   }
   const after = points.findIndex((p) => p.label === "11:45");
   if (after >= 0) {
-    points[after] = { ...points[after], count: 0, isDropMarker: true };
+    points[after] = {
+      ...points[after],
+      count: puneFixed ? points[after].count : 0,
+      isDropMarker: true,
+    };
   }
 
   return points;

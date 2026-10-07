@@ -16,6 +16,13 @@ export function scopeUnlocksEvidence(state: TicketCaseState): boolean {
   return state.answeredQuestions.includes("when") && state.answeredQuestions.includes("who");
 }
 
+function fixDone(state: TicketCaseState): boolean {
+  if (state.caseKey === "meet-quic") {
+    return state.fixApplied && state.pushJobPhase === "success";
+  }
+  return state.fixApplied;
+}
+
 /** Playbook rail gates. Evidence / Compare / Reproduce unlock after Scope (When + Who). */
 export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, StepGate> {
   const acknowledged = hasAcknowledged(state);
@@ -24,6 +31,7 @@ export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, S
   const compareDone = state.compareComplete;
   const reproduceDone = state.reproduceComplete;
   const proveDone = state.proveComplete;
+  const fixed = fixDone(state);
 
   const gates: Record<PlaybookStep, StepGate> = {
     intake: {
@@ -77,37 +85,37 @@ export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, S
         : "Complete Reproduce to unlock Prove.",
     },
     fix: {
-      unlocked: false,
-      done: false,
-      reason: "Fix arrives in Phase 7 after Prove.",
+      unlocked: proveDone,
+      done: fixed,
+      reason: proveDone
+        ? fixed
+          ? "Fix applied."
+          : state.caseKey === "meet-quic"
+            ? "Request approval, then push the corrected Block-QUIC rule."
+            : "Send the revert command and wait for the customer to apply it."
+        : "Complete Prove to unlock Fix.",
     },
     verify: {
-      unlocked: false,
-      done: false,
-      reason: "Verify arrives in Phase 7 after Fix.",
+      unlocked: fixed,
+      done: state.verified && state.customerConfirmed,
+      reason: fixed
+        ? state.customerConfirmed
+          ? "Customer confirmed."
+          : state.verified
+            ? "Ask the customer to confirm."
+            : "Re-run the failing test, then ask the customer to confirm."
+        : "Apply the fix to unlock Verify.",
     },
     rca: {
-      unlocked: false,
-      done: false,
-      reason: "RCA and close arrive in Phase 7 after customer confirmation.",
+      unlocked: state.customerConfirmed,
+      done: state.closed,
+      reason: state.customerConfirmed
+        ? state.closed
+          ? "Closed."
+          : "Draft RCA and close."
+        : "Customer confirmation required before RCA and close.",
     },
   };
-
-  if (state.fixApplied) {
-    gates.fix = { unlocked: true, done: true, reason: "Fix applied." };
-    gates.verify = {
-      unlocked: true,
-      done: state.verified,
-      reason: state.verified ? "Verified." : "Re-run the failing test.",
-    };
-  }
-  if (state.customerConfirmed) {
-    gates.rca = {
-      unlocked: true,
-      done: state.closed,
-      reason: state.closed ? "Closed." : "Draft RCA and close.",
-    };
-  }
 
   return gates;
 }
@@ -119,6 +127,9 @@ const SELECTABLE_WHEN_UNLOCKED: PlaybookStep[] = [
   "isolate",
   "reproduce",
   "prove",
+  "fix",
+  "verify",
+  "rca",
 ];
 
 export function canSelectStep(state: TicketCaseState, step: PlaybookStep): boolean {

@@ -1,20 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui";
 import {
+  AuditTrail,
   CompareStep,
   EvidenceList,
   EvidenceStep,
+  FixStep,
   HistoryRca,
   IntakeStep,
   PlaybookRail,
   ProveStep,
+  RcaStep,
   ReplyBox,
   ReproduceStep,
   ScopeStep,
   TicketHeader,
   TicketThread,
+  VerifyStep,
 } from "@/components/workspace";
 import { getHistoryTicket } from "@/content/history";
 import { workspaceCopy } from "@/content/workspace";
@@ -62,15 +66,6 @@ function TicketNotFound({ id }: { id: string }) {
   );
 }
 
-function LaterStepPanel({ step }: { step: PlaybookStep }) {
-  return (
-    <div className="space-y-2 p-4" data-testid={`step-${step}`}>
-      <h2 className="text-base font-medium capitalize text-text">{step}</h2>
-      <p className="text-sm text-text-muted">{workspaceCopy.laterStep}</p>
-    </div>
-  );
-}
-
 function LockedStepPanel({ reason }: { reason: string }) {
   return (
     <div className="space-y-2 p-4" data-testid="step-locked">
@@ -97,6 +92,16 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
   const setStep = useCaseEngine((s) => s.setStep);
   const setStatus = useCaseEngine((s) => s.setStatus);
   const postReply = useCaseEngine((s) => s.postReply);
+  const requestApproval = useCaseEngine((s) => s.requestApproval);
+  const receiveApproval = useCaseEngine((s) => s.receiveApproval);
+  const applyFix = useCaseEngine((s) => s.applyFix);
+  const advancePushJob = useCaseEngine((s) => s.advancePushJob);
+  const verify = useCaseEngine((s) => s.verify);
+  const requestCustomerConfirm = useCaseEngine((s) => s.requestCustomerConfirm);
+  const receiveCustomerConfirm = useCaseEngine((s) => s.receiveCustomerConfirm);
+  const updateRcaDraft = useCaseEngine((s) => s.updateRcaDraft);
+  const ensureRcaDraft = useCaseEngine((s) => s.ensureRcaDraft);
+  const closeTicket = useCaseEngine((s) => s.closeTicket);
 
   const [asking, setAsking] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -109,6 +114,14 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
     };
   }, []);
 
+  const handleAdvancePush = useCallback(() => {
+    advancePushJob(ticketId);
+  }, [advancePushJob, ticketId]);
+
+  const handleEnsureRca = useCallback(() => {
+    ensureRcaDraft(ticketId);
+  }, [ensureRcaDraft, ticketId]);
+
   if (!ticket || !state) {
     return <TicketNotFound id={ticketId} />;
   }
@@ -117,7 +130,11 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
   const caseState = state;
   const gates = getPlaybookGates(caseState);
   const activeGate = gates[caseState.step];
-  const typing = asking || caseState.pendingQuestions.length > 0;
+  const typing =
+    asking ||
+    caseState.pendingQuestions.length > 0 ||
+    (caseState.approvalRequested && !caseState.approvalGranted) ||
+    (caseState.confirmRequested && !caseState.customerConfirmed);
 
   function clearTimer() {
     if (timerRef.current !== null) {
@@ -229,11 +246,47 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
             }}
             onContinue={() => {
               completeProve(ticketId);
+              setStep(ticketId, "fix");
             }}
           />
         );
+      case "fix":
+        return (
+          <FixStep
+            ticketId={ticketId}
+            state={caseState}
+            asking={typing}
+            onRequestApproval={() => requestApproval(ticketId)}
+            onReceiveApproval={() => receiveApproval(ticketId)}
+            onPushConfig={() => applyFix(ticketId)}
+            onAdvancePush={handleAdvancePush}
+            onContinue={() => setStep(ticketId, "verify")}
+          />
+        );
+      case "verify":
+        return (
+          <VerifyStep
+            ticketId={ticketId}
+            state={caseState}
+            asking={typing}
+            onVerify={() => verify(ticketId)}
+            onRequestConfirm={() => requestCustomerConfirm(ticketId)}
+            onReceiveConfirm={() => receiveCustomerConfirm(ticketId)}
+            onContinue={() => setStep(ticketId, "rca")}
+          />
+        );
+      case "rca":
+        return (
+          <RcaStep
+            ticketId={ticketId}
+            state={caseState}
+            onEnsureDraft={handleEnsureRca}
+            onUpdateDraft={(draft) => updateRcaDraft(ticketId, draft)}
+            onClose={() => closeTicket(ticketId)}
+          />
+        );
       default:
-        return <LaterStepPanel step={caseState.step} />;
+        return <LockedStepPanel reason={workspaceCopy.lockedPlaceholder} />;
     }
   }
 
@@ -258,6 +311,7 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
           />
         </aside>
       </div>
+      <AuditTrail entries={caseState.auditTrail} />
     </div>
   );
 }

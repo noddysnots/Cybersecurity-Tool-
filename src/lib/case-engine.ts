@@ -7,6 +7,7 @@ import {
   getConversation,
 } from "@/content/conversations";
 import { questionsForCase } from "@/content/questions";
+import { draftRcaFromEvidence, type RcaDraft } from "@/content/rca";
 import { now } from "@/lib/time";
 import type {
   CaseKey,
@@ -23,6 +24,24 @@ export const CASE_TICKET_IDS = {
 } as const;
 
 export type CaseTicketId = (typeof CASE_TICKET_IDS)[CaseKey];
+
+export type AuditActor = "engineer" | "customer" | "system";
+
+export type AuditEntry = {
+  id: string;
+  at: string;
+  actor: AuditActor;
+  actorName: string;
+  action: string;
+};
+
+export type PushJobPhase =
+  | "idle"
+  | "queued"
+  | "validating"
+  | "pushing-india-west"
+  | "pushing-india-south"
+  | "success";
 
 export interface TicketCaseState {
   ticketId: CaseTicketId;
@@ -43,15 +62,12 @@ export interface TicketCaseState {
   approvalGranted: boolean;
   fixApplied: boolean;
   verified: boolean;
+  confirmRequested: boolean;
   customerConfirmed: boolean;
   closed: boolean;
-  pushJobPhase:
-    | "idle"
-    | "queued"
-    | "validating"
-    | "pushing-india-west"
-    | "pushing-india-south"
-    | "success";
+  pushJobPhase: PushJobPhase;
+  rcaDraft: RcaDraft | null;
+  auditTrail: AuditEntry[];
 }
 
 export interface CaseEngineState {
@@ -79,6 +95,8 @@ export interface CaseEngineState {
   verify: (ticketId: CaseTicketId) => { ok: boolean; reason: string };
   requestCustomerConfirm: (ticketId: CaseTicketId) => void;
   receiveCustomerConfirm: (ticketId: CaseTicketId) => void;
+  updateRcaDraft: (ticketId: CaseTicketId, draft: RcaDraft) => void;
+  ensureRcaDraft: (ticketId: CaseTicketId) => void;
   closeTicket: (ticketId: CaseTicketId) => { ok: boolean; reason: string };
   resetDemo: () => void;
 }
@@ -89,6 +107,27 @@ function isoNow(): string {
 
 function msgId(prefix: string): string {
   return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function audit(
+  actor: AuditActor,
+  actorName: string,
+  action: string,
+): AuditEntry {
+  return {
+    id: msgId("audit"),
+    at: isoNow(),
+    actor,
+    actorName,
+    action,
+  };
+}
+
+function appendAudit(state: TicketCaseState, entry: AuditEntry): TicketCaseState {
+  return {
+    ...state,
+    auditTrail: [...state.auditTrail, entry],
+  };
 }
 
 function intakeThread(caseKey: CaseKey, ticketId: CaseTicketId): Message[] {
@@ -127,9 +166,12 @@ function initialTicket(caseKey: CaseKey): TicketCaseState {
     approvalGranted: false,
     fixApplied: false,
     verified: false,
+    confirmRequested: false,
     customerConfirmed: false,
     closed: false,
     pushJobPhase: "idle",
+    rcaDraft: null,
+    auditTrail: [],
   };
 }
 
@@ -153,6 +195,16 @@ function normalizeTicket(ticket: TicketCaseState): TicketCaseState {
     reproduceStarted: ticket.reproduceStarted ?? false,
     reproduceComplete: ticket.reproduceComplete ?? false,
     proveComplete: ticket.proveComplete ?? false,
+    approvalRequested: ticket.approvalRequested ?? false,
+    approvalGranted: ticket.approvalGranted ?? false,
+    fixApplied: ticket.fixApplied ?? false,
+    verified: ticket.verified ?? false,
+    confirmRequested: ticket.confirmRequested ?? false,
+    customerConfirmed: ticket.customerConfirmed ?? false,
+    closed: ticket.closed ?? false,
+    pushJobPhase: ticket.pushJobPhase ?? "idle",
+    rcaDraft: ticket.rcaDraft ?? null,
+    auditTrail: ticket.auditTrail ?? [],
   };
 }
 
@@ -328,48 +380,81 @@ export const useCaseEngine = create<CaseEngineState>()(
               createdAt: isoNow(),
               kind: "acknowledge",
             };
-            return {
-              ...current,
-              status: "in_progress",
-              step: "scope",
-              thread: [...current.thread, message],
-            };
+            return appendAudit(
+              {
+                ...current,
+                status: "in_progress",
+                step: "scope",
+                thread: [...current.thread, message],
+              },
+              audit("engineer", "Priya Nair", "Acknowledged ticket and started Scope"),
+            );
           }),
         }));
       },
 
       askQuestion(ticketId, questionId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) =>
-            postAsk(current, questionId),
-          ),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            const next = postAsk(current, questionId);
+            if (next === current) return current;
+            return appendAudit(
+              next,
+              audit(
+                "engineer",
+                "Priya Nair",
+                `Asked customer: ${questionLabel(current.caseKey, questionId)}`,
+              ),
+            );
+          }),
         }));
       },
 
       askAllQuestions(ticketId, questionIds) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) =>
-            postAskAll(current, questionIds),
-          ),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            const next = postAskAll(current, questionIds);
+            if (next === current) return current;
+            return appendAudit(
+              next,
+              audit("engineer", "Priya Nair", "Asked all remaining scope questions"),
+            );
+          }),
         }));
       },
 
       deliverAnswer(ticketId, questionId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) =>
-            deliverOne(current, questionId),
-          ),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            const next = deliverOne(current, questionId);
+            if (next === current) return current;
+            const script = getConversation(current.caseKey);
+            return appendAudit(
+              next,
+              audit(
+                "customer",
+                script.contactName,
+                `Answered: ${questionLabel(current.caseKey, questionId)}`,
+              ),
+            );
+          }),
         }));
       },
 
       deliverPendingAnswers(ticketId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) =>
-            current.pendingQuestions.reduce(
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            const next = current.pendingQuestions.reduce(
               (acc, questionId) => deliverOne(acc, questionId),
               current,
-            ),
-          ),
+            );
+            if (next === current) return current;
+            const script = getConversation(current.caseKey);
+            return appendAudit(
+              next,
+              audit("customer", script.contactName, "Answered pending scope questions"),
+            );
+          }),
         }));
       },
 
@@ -382,28 +467,40 @@ export const useCaseEngine = create<CaseEngineState>()(
             ) {
               return current;
             }
-            return {
-              ...current,
-              keyFindings: [...current.keyFindings, questionId],
-            };
+            return appendAudit(
+              {
+                ...current,
+                keyFindings: [...current.keyFindings, questionId],
+              },
+              audit(
+                "engineer",
+                "Priya Nair",
+                `Marked key finding: ${questionLabel(current.caseKey, questionId)}`,
+              ),
+            );
           }),
         }));
       },
 
       pinEvidence(ticketId, evidence) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) => ({
-            ...current,
-            evidenceComplete: true,
-            pinnedEvidence: [
-              ...current.pinnedEvidence,
+          tickets: withTicket(state.tickets, ticketId, (current) =>
+            appendAudit(
               {
-                ...evidence,
-                ticketId,
-                pinnedAt: isoNow(),
+                ...current,
+                evidenceComplete: true,
+                pinnedEvidence: [
+                  ...current.pinnedEvidence,
+                  {
+                    ...evidence,
+                    ticketId,
+                    pinnedAt: isoNow(),
+                  },
+                ],
               },
-            ],
-          })),
+              audit("engineer", "Priya Nair", `Pinned evidence: ${evidence.label}`),
+            ),
+          ),
         }));
       },
 
@@ -418,19 +515,25 @@ export const useCaseEngine = create<CaseEngineState>()(
 
       completeEvidence(ticketId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) => ({
-            ...current,
-            evidenceComplete: true,
-          })),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.evidenceComplete) return current;
+            return appendAudit(
+              { ...current, evidenceComplete: true },
+              audit("engineer", "Priya Nair", "Marked Evidence complete"),
+            );
+          }),
         }));
       },
 
       completeCompare(ticketId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) => ({
-            ...current,
-            compareComplete: true,
-          })),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.compareComplete) return current;
+            return appendAudit(
+              { ...current, compareComplete: true },
+              audit("engineer", "Priya Nair", "Completed Compare"),
+            );
+          }),
         }));
       },
 
@@ -451,32 +554,41 @@ export const useCaseEngine = create<CaseEngineState>()(
               createdAt: isoNow(),
               kind: "retry-request",
             };
-            return {
-              ...current,
-              reproduceStarted: true,
-              reproduceComplete: true,
-              status: "pending_customer",
-              thread: [...current.thread, message],
-            };
+            return appendAudit(
+              {
+                ...current,
+                reproduceStarted: true,
+                reproduceComplete: true,
+                status: "pending_customer",
+                thread: [...current.thread, message],
+              },
+              audit("engineer", "Priya Nair", "Asked customer to retry now"),
+            );
           }),
         }));
       },
 
       completeReproduce(ticketId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) => ({
-            ...current,
-            reproduceComplete: true,
-          })),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.reproduceComplete) return current;
+            return appendAudit(
+              { ...current, reproduceComplete: true },
+              audit("engineer", "Priya Nair", "Completed Reproduce"),
+            );
+          }),
         }));
       },
 
       completeProve(ticketId) {
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (current) => ({
-            ...current,
-            proveComplete: true,
-          })),
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.proveComplete) return current;
+            return appendAudit(
+              { ...current, proveComplete: true },
+              audit("engineer", "Priya Nair", "Completed Prove; unlocked Fix"),
+            );
+          }),
         }));
       },
 
@@ -540,12 +652,19 @@ export const useCaseEngine = create<CaseEngineState>()(
               createdAt: isoNow(),
               kind: "approval-request",
             };
-            return {
-              ...current,
-              approvalRequested: true,
-              status: "pending_customer",
-              thread: [...current.thread, message],
-            };
+            const label =
+              current.caseKey === "meet-quic"
+                ? "Requested approval to push Block-QUIC fix"
+                : "Requested customer action to revert ipsec-prisma DH group";
+            return appendAudit(
+              {
+                ...current,
+                approvalRequested: true,
+                status: "pending_customer",
+                thread: [...current.thread, message],
+              },
+              audit("engineer", "Priya Nair", label),
+            );
           }),
         }));
       },
@@ -566,12 +685,34 @@ export const useCaseEngine = create<CaseEngineState>()(
               createdAt: isoNow(),
               kind: "approval",
             };
-            return {
+            let next: TicketCaseState = {
               ...current,
               approvalGranted: true,
               status: "in_progress",
               thread: [...current.thread, message],
             };
+            next = appendAudit(
+              next,
+              audit(
+                "customer",
+                script.contactName,
+                current.caseKey === "meet-quic"
+                  ? "Approved config change"
+                  : "Applied and committed revert",
+              ),
+            );
+            // Case 2: customer apply flips tunnel state immediately.
+            if (current.caseKey === "pune-tunnel" && !current.fixApplied) {
+              next = appendAudit(
+                {
+                  ...next,
+                  fixApplied: true,
+                  pushJobPhase: "success",
+                },
+                audit("system", "System", "Pune tunnel state flipped to up"),
+              );
+            }
+            return next;
           }),
         }));
       },
@@ -579,27 +720,55 @@ export const useCaseEngine = create<CaseEngineState>()(
       applyFix(ticketId) {
         set((state) => ({
           tickets: withTicket(state.tickets, ticketId, (current) => {
-            if (!current.approvalGranted || current.fixApplied) {
+            if (!current.approvalGranted) {
               return current;
             }
-            return {
-              ...current,
-              fixApplied: true,
-              pushJobPhase: current.caseKey === "meet-quic" ? "queued" : "success",
-              step: "verify",
-            };
+            if (current.caseKey === "meet-quic") {
+              if (current.pushJobPhase !== "idle" && current.fixApplied) {
+                return current;
+              }
+              if (current.pushJobPhase !== "idle") {
+                return current;
+              }
+              return appendAudit(
+                {
+                  ...current,
+                  fixApplied: true,
+                  pushJobPhase: "queued",
+                },
+                audit("engineer", "Priya Nair", "Started config push (queued)"),
+              );
+            }
+            if (current.fixApplied) {
+              return current;
+            }
+            return appendAudit(
+              {
+                ...current,
+                fixApplied: true,
+                pushJobPhase: "success",
+              },
+              audit("system", "System", "Fix applied; Pune tunnel up"),
+            );
           }),
         }));
       },
 
       advancePushJob(ticketId) {
-        const order: TicketCaseState["pushJobPhase"][] = [
+        const order: PushJobPhase[] = [
           "queued",
           "validating",
           "pushing-india-west",
           "pushing-india-south",
           "success",
         ];
+        const labels: Record<Exclude<PushJobPhase, "idle">, string> = {
+          queued: "Push queued",
+          validating: "Push validating",
+          "pushing-india-west": "Pushing to India West",
+          "pushing-india-south": "Pushing to India South",
+          success: "Push succeeded",
+        };
         set((state) => ({
           tickets: withTicket(state.tickets, ticketId, (current) => {
             if (current.caseKey !== "meet-quic" || !current.fixApplied) {
@@ -609,7 +778,18 @@ export const useCaseEngine = create<CaseEngineState>()(
             if (idx < 0 || idx >= order.length - 1) {
               return current;
             }
-            return { ...current, pushJobPhase: order[idx + 1] };
+            const nextPhase = order[idx + 1];
+            if (!nextPhase || nextPhase === "idle") {
+              return current;
+            }
+            const next: TicketCaseState = {
+              ...current,
+              pushJobPhase: nextPhase,
+            };
+            return appendAudit(
+              next,
+              audit("system", "System", labels[nextPhase]),
+            );
           }),
         }));
       },
@@ -623,11 +803,19 @@ export const useCaseEngine = create<CaseEngineState>()(
           return { ok: false, reason: "Cannot verify until the config push finishes." };
         }
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (ticket) => ({
-            ...ticket,
-            verified: true,
-            step: "verify",
-          })),
+          tickets: withTicket(state.tickets, ticketId, (ticket) => {
+            if (ticket.verified) {
+              return ticket;
+            }
+            return appendAudit(
+              {
+                ...ticket,
+                verified: true,
+                step: "verify",
+              },
+              audit("engineer", "Priya Nair", "Re-ran failing test: passed"),
+            );
+          }),
         }));
         return { ok: true, reason: "Verify passed." };
       },
@@ -635,7 +823,7 @@ export const useCaseEngine = create<CaseEngineState>()(
       requestCustomerConfirm(ticketId) {
         set((state) => ({
           tickets: withTicket(state.tickets, ticketId, (current) => {
-            if (!current.verified) {
+            if (!current.verified || current.confirmRequested) {
               return current;
             }
             const script = getConversation(current.caseKey);
@@ -648,11 +836,15 @@ export const useCaseEngine = create<CaseEngineState>()(
               createdAt: isoNow(),
               kind: "retry-request",
             };
-            return {
-              ...current,
-              status: "pending_customer",
-              thread: [...current.thread, message],
-            };
+            return appendAudit(
+              {
+                ...current,
+                confirmRequested: true,
+                status: "pending_customer",
+                thread: [...current.thread, message],
+              },
+              audit("engineer", "Priya Nair", "Asked customer to confirm the fix"),
+            );
           }),
         }));
       },
@@ -673,11 +865,39 @@ export const useCaseEngine = create<CaseEngineState>()(
               createdAt: isoNow(),
               kind: "confirm",
             };
+            return appendAudit(
+              {
+                ...current,
+                customerConfirmed: true,
+                confirmRequested: true,
+                status: "in_progress",
+                rcaDraft:
+                  current.rcaDraft ??
+                  draftRcaFromEvidence(current.caseKey, current.pinnedEvidence),
+                thread: [...current.thread, message],
+              },
+              audit("customer", script.contactName, "Confirmed fix worked"),
+            );
+          }),
+        }));
+      },
+
+      updateRcaDraft(ticketId, draft) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => ({
+            ...current,
+            rcaDraft: draft,
+          })),
+        }));
+      },
+
+      ensureRcaDraft(ticketId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.rcaDraft) return current;
             return {
               ...current,
-              customerConfirmed: true,
-              status: "resolved",
-              thread: [...current.thread, message],
+              rcaDraft: draftRcaFromEvidence(current.caseKey, current.pinnedEvidence),
             };
           }),
         }));
@@ -688,13 +908,24 @@ export const useCaseEngine = create<CaseEngineState>()(
         if (!current.customerConfirmed) {
           return { ok: false, reason: "Cannot close before the customer confirms." };
         }
+        if (current.closed) {
+          return { ok: true, reason: "Ticket already closed." };
+        }
         set((state) => ({
-          tickets: withTicket(state.tickets, ticketId, (ticket) => ({
-            ...ticket,
-            closed: true,
-            status: "closed",
-            step: "rca",
-          })),
+          tickets: withTicket(state.tickets, ticketId, (ticket) =>
+            appendAudit(
+              {
+                ...ticket,
+                closed: true,
+                status: "resolved",
+                step: "rca",
+                rcaDraft:
+                  ticket.rcaDraft ??
+                  draftRcaFromEvidence(ticket.caseKey, ticket.pinnedEvidence),
+              },
+              audit("engineer", "Priya Nair", "Closed ticket (Resolved)"),
+            ),
+          ),
         }));
         return { ok: true, reason: "Ticket closed." };
       },

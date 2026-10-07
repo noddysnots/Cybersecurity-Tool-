@@ -1,12 +1,16 @@
+export { AuditTrail } from "./AuditTrail";
 export { CompareStep } from "./CompareStep";
 export { EvidenceList } from "./EvidenceList";
 export { EvidenceStep } from "./EvidenceStep";
+export { FixStep } from "./FixStep";
 export { HistoryRca } from "./HistoryRca";
 export { IntakeStep } from "./IntakeStep";
 export { PlaybookRail } from "./PlaybookRail";
 export { ProveStep } from "./ProveStep";
+export { RcaStep } from "./RcaStep";
 export { ReplyBox } from "./ReplyBox";
 export { ReproduceStep } from "./ReproduceStep";
 export { ScopeStep } from "./ScopeStep";
 export { TicketHeader } from "./TicketHeader";
 export { TicketThread } from "./TicketThread";
+export { VerifyStep } from "./VerifyStep";

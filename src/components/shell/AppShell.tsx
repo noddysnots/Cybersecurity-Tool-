@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { CommandPalette } from "@/components/shell/CommandPalette";
 import { ConsoleDrawer } from "@/components/shell/ConsoleDrawer";
 import { LeftNav } from "@/components/shell/LeftNav";
+import { ToastHost } from "@/components/shell/ToastHost";
 import { TopBar } from "@/components/shell/TopBar";
 import { shellCopy } from "@/content/shell";
 import { useUiPrefs } from "@/lib/ui-prefs";
@@ -43,6 +44,7 @@ export function AppShell() {
         </div>
       </div>
       <CommandPalette />
+      <ToastHost />
     </div>
   );
 }

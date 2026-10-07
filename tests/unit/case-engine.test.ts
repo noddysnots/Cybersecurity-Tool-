@@ -139,7 +139,8 @@ describe("case engine", () => {
     ).toBe(true);
     expect(engine.closeTicket("TKT-24817").ok).toBe(true);
     expect(useCaseEngine.getState().tickets["TKT-24817"].closed).toBe(true);
-    expect(useCaseEngine.getState().tickets["TKT-24817"].status).toBe("closed");
+    expect(useCaseEngine.getState().tickets["TKT-24817"].status).toBe("resolved");
+    expect(useCaseEngine.getState().tickets["TKT-24817"].auditTrail.length).toBeGreaterThan(0);
   });
 
   it("Case 2: tunnel flips after fix; close requires customer confirm", () => {
@@ -177,5 +178,21 @@ describe("case engine", () => {
     engine.resetDemo();
     expect(selectPuneTunnelStatus(useCaseEngine.getState())).toBe("down");
     expect(useCaseEngine.getState().tickets["TKT-24817"].answeredQuestions).toEqual([]);
+  });
+
+  it("unlocks Fix after Prove and RCA after customer confirm", () => {
+    const engine = useCaseEngine.getState();
+    engine.acknowledge("TKT-24817", "Thanks, we are looking into this now.");
+    engine.completeEvidence("TKT-24817");
+    engine.completeCompare("TKT-24817");
+    engine.completeReproduce("TKT-24817");
+    expect(getPlaybookGates(useCaseEngine.getState().tickets["TKT-24817"]).fix.unlocked).toBe(
+      false,
+    );
+    engine.completeProve("TKT-24817");
+    const afterProve = useCaseEngine.getState().tickets["TKT-24817"];
+    expect(afterProve.proveComplete).toBe(true);
+    expect(getPlaybookGates(afterProve).fix.unlocked).toBe(true);
+    expect(getPlaybookGates(afterProve).verify.unlocked).toBe(false);
   });
 });
