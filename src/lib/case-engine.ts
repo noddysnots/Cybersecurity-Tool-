@@ -34,6 +34,10 @@ export interface TicketCaseState {
   keyFindings: string[];
   pinnedEvidence: Evidence[];
   thread: Message[];
+  evidenceComplete: boolean;
+  compareComplete: boolean;
+  reproduceStarted: boolean;
+  reproduceComplete: boolean;
   approvalRequested: boolean;
   approvalGranted: boolean;
   fixApplied: boolean;
@@ -59,6 +63,10 @@ export interface CaseEngineState {
   markKeyFinding: (ticketId: CaseTicketId, questionId: string) => void;
   pinEvidence: (ticketId: CaseTicketId, evidence: Omit<Evidence, "ticketId" | "pinnedAt">) => void;
   unpinEvidence: (ticketId: CaseTicketId, evidenceId: string) => void;
+  completeEvidence: (ticketId: CaseTicketId) => void;
+  completeCompare: (ticketId: CaseTicketId) => void;
+  askReproduceRetry: (ticketId: CaseTicketId, body: string) => void;
+  completeReproduce: (ticketId: CaseTicketId) => void;
   setStep: (ticketId: CaseTicketId, step: PlaybookStep) => void;
   setStatus: (ticketId: CaseTicketId, status: TicketStatus) => void;
   postReply: (ticketId: CaseTicketId, body: string, internal?: boolean) => void;
@@ -108,6 +116,10 @@ function initialTicket(caseKey: CaseKey): TicketCaseState {
     keyFindings: [],
     pinnedEvidence: [],
     thread: intakeThread(caseKey, ticketId),
+    evidenceComplete: false,
+    compareComplete: false,
+    reproduceStarted: false,
+    reproduceComplete: false,
     approvalRequested: false,
     approvalGranted: false,
     fixApplied: false,
@@ -133,6 +145,10 @@ function normalizeTicket(ticket: TicketCaseState): TicketCaseState {
     keyFindings: ticket.keyFindings ?? [],
     pinnedEvidence: ticket.pinnedEvidence ?? [],
     thread: ticket.thread ?? [],
+    evidenceComplete: ticket.evidenceComplete ?? false,
+    compareComplete: ticket.compareComplete ?? false,
+    reproduceStarted: ticket.reproduceStarted ?? false,
+    reproduceComplete: ticket.reproduceComplete ?? false,
   };
 }
 
@@ -374,6 +390,7 @@ export const useCaseEngine = create<CaseEngineState>()(
         set((state) => ({
           tickets: withTicket(state.tickets, ticketId, (current) => ({
             ...current,
+            evidenceComplete: true,
             pinnedEvidence: [
               ...current.pinnedEvidence,
               {
@@ -391,6 +408,61 @@ export const useCaseEngine = create<CaseEngineState>()(
           tickets: withTicket(state.tickets, ticketId, (current) => ({
             ...current,
             pinnedEvidence: current.pinnedEvidence.filter((item) => item.id !== evidenceId),
+          })),
+        }));
+      },
+
+      completeEvidence(ticketId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => ({
+            ...current,
+            evidenceComplete: true,
+          })),
+        }));
+      },
+
+      completeCompare(ticketId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => ({
+            ...current,
+            compareComplete: true,
+          })),
+        }));
+      },
+
+      askReproduceRetry(ticketId, body) {
+        const trimmed = body.trim();
+        if (!trimmed) return;
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => {
+            if (current.reproduceStarted) {
+              return current;
+            }
+            const message: Message = {
+              id: msgId("reproduce"),
+              ticketId,
+              author: "engineer",
+              authorName: "Priya Nair",
+              body: trimmed,
+              createdAt: isoNow(),
+              kind: "retry-request",
+            };
+            return {
+              ...current,
+              reproduceStarted: true,
+              reproduceComplete: true,
+              status: "pending_customer",
+              thread: [...current.thread, message],
+            };
+          }),
+        }));
+      },
+
+      completeReproduce(ticketId) {
+        set((state) => ({
+          tickets: withTicket(state.tickets, ticketId, (current) => ({
+            ...current,
+            reproduceComplete: true,
           })),
         }));
       },

@@ -13,6 +13,7 @@ export {
 } from "./conversations";
 export { ticketsCopy } from "./tickets";
 export { workspaceCopy, PLAYBOOK_STEP_META } from "./workspace";
+export { logsCopy } from "./logs";
 export {
   HISTORY_TICKETS,
   getHistoryTicket,

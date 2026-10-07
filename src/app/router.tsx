@@ -4,6 +4,7 @@ import { ErrorBoundary } from "@/app/ErrorBoundary";
 import { RequireAuth } from "@/app/guards";
 import { HomePage } from "@/app/routes/HomePage";
 import { LoginPage } from "@/app/routes/LoginPage";
+import { LogsPage } from "@/app/routes/LogsPage";
 import { NotFoundPage } from "@/app/routes/NotFoundPage";
 import { PlaceholderPage } from "@/app/routes/PlaceholderPage";
 import { SplashPage } from "@/app/routes/SplashPage";
@@ -54,11 +55,7 @@ export const router = createBrowserRouter([
             path: "/logs",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Logs"
-                  path="/logs"
-                  description="Log explorer arrives in Phase 5."
-                />
+                <LogsPage />
               </ErrorBoundary>
             ),
           },

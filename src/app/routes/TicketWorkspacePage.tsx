@@ -3,11 +3,14 @@ import { Link, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui";
 import {
+  CompareStep,
   EvidenceList,
+  EvidenceStep,
   HistoryRca,
   IntakeStep,
   PlaybookRail,
   ReplyBox,
+  ReproduceStep,
   ScopeStep,
   TicketHeader,
   TicketThread,
@@ -85,6 +88,10 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
   const deliverAnswer = useCaseEngine((s) => s.deliverAnswer);
   const deliverPendingAnswers = useCaseEngine((s) => s.deliverPendingAnswers);
   const markKeyFinding = useCaseEngine((s) => s.markKeyFinding);
+  const pinEvidence = useCaseEngine((s) => s.pinEvidence);
+  const completeEvidence = useCaseEngine((s) => s.completeEvidence);
+  const completeCompare = useCaseEngine((s) => s.completeCompare);
+  const askReproduceRetry = useCaseEngine((s) => s.askReproduceRetry);
   const setStep = useCaseEngine((s) => s.setStep);
   const setStatus = useCaseEngine((s) => s.setStatus);
   const postReply = useCaseEngine((s) => s.postReply);
@@ -175,10 +182,39 @@ function WorkableWorkspace({ ticketId }: { ticketId: CaseTicketId }) {
         );
       case "evidence":
         return (
-          <div className="space-y-2 p-4" data-testid="step-evidence">
-            <h2 className="text-base font-medium text-text">Evidence</h2>
-            <p className="text-sm text-text-muted">{gates.evidence.reason}</p>
-          </div>
+          <EvidenceStep
+            ticketId={ticketId}
+            state={caseState}
+            onPin={(evidence) => pinEvidence(ticketId, evidence)}
+            onContinue={() => {
+              completeEvidence(ticketId);
+              setStep(ticketId, "isolate");
+            }}
+          />
+        );
+      case "isolate":
+        return (
+          <CompareStep
+            ticketId={ticketId}
+            state={caseState}
+            onPin={(evidence) => {
+              pinEvidence(ticketId, evidence);
+              completeCompare(ticketId);
+            }}
+            onContinue={() => {
+              completeCompare(ticketId);
+              setStep(ticketId, "reproduce");
+            }}
+          />
+        );
+      case "reproduce":
+        return (
+          <ReproduceStep
+            ticketId={ticketId}
+            state={caseState}
+            onAskRetry={(body) => askReproduceRetry(ticketId, body)}
+            onPin={(evidence) => pinEvidence(ticketId, evidence)}
+          />
         );
       default:
         return <LaterStepPanel step={caseState.step} />;

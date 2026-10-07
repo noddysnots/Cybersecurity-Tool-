@@ -16,10 +16,13 @@ export function scopeUnlocksEvidence(state: TicketCaseState): boolean {
   return state.answeredQuestions.includes("when") && state.answeredQuestions.includes("who");
 }
 
-/** Playbook rail gates for Phase 4 (Intake + Scope fully workable). */
+/** Playbook rail gates. Evidence / Compare / Reproduce unlock after Scope (When + Who). */
 export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, StepGate> {
   const acknowledged = hasAcknowledged(state);
   const scopeReady = scopeUnlocksEvidence(state);
+  const evidenceDone = state.evidenceComplete;
+  const compareDone = state.compareComplete;
+  const reproduceDone = state.reproduceComplete;
 
   const gates: Record<PlaybookStep, StepGate> = {
     intake: {
@@ -38,20 +41,30 @@ export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, S
     },
     evidence: {
       unlocked: scopeReady,
-      done: false,
+      done: evidenceDone,
       reason: scopeReady
-        ? "Evidence explorer arrives in Phase 5."
+        ? evidenceDone
+          ? "Evidence reviewed."
+          : "Review logs for the failing user, pin useful rows."
         : "Answer When and Who in Scope to unlock Evidence.",
     },
     isolate: {
-      unlocked: false,
-      done: false,
-      reason: "Compare arrives in Phase 5 after Evidence.",
+      unlocked: evidenceDone,
+      done: compareDone,
+      reason: evidenceDone
+        ? compareDone
+          ? "Comparison pinned."
+          : "Compare failing vs working and pin the diff."
+        : "Complete Evidence (pin a row or continue) to unlock Compare.",
     },
     reproduce: {
-      unlocked: false,
-      done: false,
-      reason: "Reproduce arrives in Phase 5 after Compare.",
+      unlocked: compareDone,
+      done: reproduceDone,
+      reason: compareDone
+        ? reproduceDone
+          ? "Retry requested."
+          : "Ask the customer to retry and watch live logs."
+        : "Complete Compare to unlock Reproduce.",
     },
     prove: {
       unlocked: false,
@@ -94,10 +107,18 @@ export function getPlaybookGates(state: TicketCaseState): Record<PlaybookStep, S
   return gates;
 }
 
+const SELECTABLE_WHEN_UNLOCKED: PlaybookStep[] = [
+  "intake",
+  "scope",
+  "evidence",
+  "isolate",
+  "reproduce",
+];
+
 export function canSelectStep(state: TicketCaseState, step: PlaybookStep): boolean {
   const gate = getPlaybookGates(state)[step];
   if (gate.done) return true;
-  return gate.unlocked && (step === "intake" || step === "scope" || step === "evidence");
+  return gate.unlocked && SELECTABLE_WHEN_UNLOCKED.includes(step);
 }
 
 export function unansweredQuestionIds(state: TicketCaseState): string[] {

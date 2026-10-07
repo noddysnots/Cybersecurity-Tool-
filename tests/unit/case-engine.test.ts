@@ -71,7 +71,19 @@ describe("case engine", () => {
     const ticket = useCaseEngine.getState().tickets["TKT-24817"];
     expect(scopeUnlocksEvidence(ticket)).toBe(true);
     expect(getPlaybookGates(ticket).evidence.unlocked).toBe(true);
-    expect(getPlaybookGates(ticket).evidence.reason).toContain("Phase 5");
+    expect(getPlaybookGates(ticket).evidence.reason).toContain("failing user");
+    expect(getPlaybookGates(ticket).isolate.unlocked).toBe(false);
+
+    engine.pinEvidence("TKT-24817", {
+      id: "ev-test",
+      source: "traffic",
+      label: "test pin",
+      refId: "log-traffic-ankit-100214",
+      note: "",
+    });
+    const afterPin = useCaseEngine.getState().tickets["TKT-24817"];
+    expect(afterPin.evidenceComplete).toBe(true);
+    expect(getPlaybookGates(afterPin).isolate.unlocked).toBe(true);
   });
 
   it("Case 1: cannot verify before fix, cannot close before confirm", () => {

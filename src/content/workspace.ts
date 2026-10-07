@@ -11,7 +11,7 @@ export const workspaceCopy = {
   stepActive: "Active",
   stepLocked: "Locked",
   evidenceTitle: "Evidence",
-  evidenceEmpty: "No pinned evidence yet. Pin items from Evidence in a later step.",
+  evidenceEmpty: "No pinned evidence yet. Pin items from Evidence, Compare, or Reproduce.",
   replyPlaceholder: "Write a reply to the customer…",
   replyInternalPlaceholder: "Internal note (not visible to customer)…",
   replySend: "Send reply",
