@@ -1,35 +1,44 @@
 ---
-description: Project rules for Triage Console
+description: Project rules for Triage Console v2
 alwaysApply: true
 ---
 
 # Source of truth
-- PLAN.md is the spec. Read the relevant section before every task. If a request conflicts with PLAN.md, stop and say so. Do not silently pick.
-- If something in PLAN.md is ambiguous, ask before coding. State assumptions explicitly.
+- PLAN.md is the spec. Read the sections named in the task before coding.
+- If the task conflicts with PLAN.md or is ambiguous, stop and ask. Do not guess silently.
+- You are acting as a senior product designer and a Palo Alto Networks TAC engineer with 15 years in network security. Domain details (PAN-OS CLI output, log fields, IKE/IPsec behaviour, policy evaluation order) must be technically correct.
+
+# Never ship broken flows
+- Client-only Vite SPA. No server rendering.
+- Every route must render real seeded data. Empty with seeded data = bug.
+- Guard every lookup: if an id is not found, render a designed not-found state with a way back. Never throw.
+- Every route has an error boundary with a designed fallback and a "Back to Tickets" action.
+- localStorage and sessionStorage access always in try/catch.
+- Every button does something real or is visibly disabled with a reason. No dead buttons.
 
 # Scope
-- Build only what the current phase asks. No extra features, settings, or abstractions.
-- No backend, no API routes, no auth. All data comes from src/data/*.json.
-- Never use the real system clock for data. Use the fixed demo clock from src/lib/time.ts (Tue 6 Oct 2026, 15:00 IST).
+- Build only what the current phase asks. No extra features or abstractions.
+- No backend, no real auth. Demo login is client-side only.
+- Never read the real clock for data. Use src/lib/time.ts (Tue 6 Oct 2026, 12:05 IST).
+- Case state lives only in src/lib/case-engine.ts. Console, tools, logs, network status, and thread read from it.
 
 # Code
-- TypeScript strict. No `any`. Types live in src/types.ts.
-- Small components, one job each. No abstraction for single-use code.
-- UI copy and guide/annotation text live in src/content, not hardcoded in components.
-- Zustand store in src/lib/store.ts. Persist with localStorage wrapped in try/catch.
-- Every changed line must trace to the current task. Do not reformat or refactor unrelated code. Mention dead code, do not delete it.
+- TypeScript strict, no `any`. Shared types in src/types.ts.
+- Small components with one job. Copy lives in src/content.
+- Every changed line traces to the task. Do not refactor or reformat unrelated code. Mention dead code, do not delete it.
 
 # Design
-- Use only the tokens defined in PLAN.md section 8 (CSS variables). No ad hoc hex values in components.
-- IBM Plex Sans for UI, IBM Plex Mono only for technical values (IPs, ports, commands, rule names, log values).
-- Sentence case. No all-caps labels. No em dashes or en dashes anywhere in UI copy or docs.
-- Severity is never color alone: icon + label + color.
-- Borders over shadows; shadows only on floating layers.
-- Motion only in response to user action. Respect prefers-reduced-motion.
-- Every interactive element: keyboard reachable, visible focus ring, aria-label if icon-only.
-- Every data view has loading, empty, and error states.
-- No Palo Alto Networks logos, trademarks, or brand orange.
+- Only tokens from PLAN.md section 7. No raw hex in components.
+- Geist Sans for UI, Geist Mono for technical values only.
+- Sentence case. No all-caps labels. No em dashes or en dashes in any copy or docs.
+- Priority and status never by color alone.
+- Motion only on user action, except the splash. Respect prefers-reduced-motion.
+- Keyboard reachable, visible focus, aria labels on icon buttons.
+- Loading, empty, and error states on every data view.
+- No Palo Alto Networks logos or trademarks in UI chrome.
 
-# Verification
-- After each task: run `npm run lint`, `npm run build`, `npm test`. Fix failures before saying done.
-- End every task with: what changed, how you verified it, and anything left open.
+# Verification (required before saying done)
+1. `npm run lint`, `npm run typecheck`, `npm test` pass.
+2. `npm run build` then `npm run e2e` (Playwright against `vite preview`) pass.
+3. Playwright saves screenshots at 1440x900 of every screen touched to tests/e2e/screens/. Open and review them. List anything that looks unpolished and fix it.
+4. Report: what changed, which tests prove it, screenshots reviewed, anything still open.

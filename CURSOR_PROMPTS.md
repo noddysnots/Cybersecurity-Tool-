@@ -1,211 +1,191 @@
-# Cursor Prompts: Triage Console
+# Cursor Prompts v2: Triage Console
 
-How to use:
-1. Put `PLAN.md` in the repo root and `.cursor/rules/project.mdc` in place before Phase 0.
-2. Paste one phase at a time into Cursor Agent. Do not paste the next phase until the current one passes its checks.
-3. After every phase, run the Review prompt at the bottom. Fix what it finds, then commit with the given message and push. Vercel redeploys on every push.
-
----
-
-## Phase 0: Setup and deploy pipeline
-
-```
-Read PLAN.md fully. Do not write feature code yet.
-
-1. Create a Next.js App Router project with TypeScript strict, Tailwind, ESLint, src/ directory.
-2. Install: shadcn/ui (init only), zustand, @tanstack/react-table, @tanstack/react-virtual, cmdk, lucide-react, motion, date-fns, date-fns-tz. Dev: vitest, @faker-js/faker, tsx.
-3. Add IBM Plex Sans and IBM Plex Mono via next/font.
-4. Create the CSS variables from PLAN.md section 8 (light + dark) in globals.css and map them in the Tailwind theme. Nothing else styled yet.
-5. Create the folder structure from PLAN.md section 13 with empty index files where needed.
-6. Add scripts: dev, build, lint, test, generate.
-7. Create src/lib/time.ts exporting the fixed demo clock and IST/UTC format helpers. Add a test for it.
-8. A placeholder home page that says "Triage Console" using the tokens.
-
-Before coding, list any assumptions or questions about PLAN.md. If none, proceed.
-Done when: lint, build, test pass.
-```
-Commit: `chore: project setup, tokens, demo clock`
-Then: push to GitHub, import the repo in Vercel, confirm the placeholder is live.
+How to run this:
+1. Start a new branch `v2` (or wipe the repo). Put `PLAN.md` in the root and `.cursor/rules/project.mdc` in place.
+2. Paste one phase at a time into Cursor Agent. Do not move on until the phase's tests pass and you have looked at the screenshots yourself.
+3. After each phase, paste the Review prompt (bottom). Fix what it finds. Commit and push. Check the Vercel preview with your own clicks.
+4. If Cursor says "done" without showing test results, paste: "Show me the Playwright output and the screenshots. Not done until both are shown."
 
 ---
 
-## Phase 1: Data
+## Phase 0: Fresh foundation
 
 ```
-Read PLAN.md sections 4 and 5.
+Read PLAN.md sections 0, 10, 11 and the project rules. Do not build features yet.
 
-1. Write src/types.ts exactly as in section 5 (extend only if a scenario record needs a field, and tell me which).
-2. Write scripts/generate-data.ts with a fixed faker seed that outputs to src/data/: alerts.json, logs.json, rules.json, decryption-rules.json, networks.json, service-connections.json, users.json, hosts.json.
-3. Hand-insert every scenario record from section 4 (A, B, C) with the exact values: IPs, users, times, rule names, messages. Do not randomize them.
-4. Noise must look realistic: plausible apps, ports, rule names, users, sites. Include duplicates, false positives, already-resolved alerts.
-5. Tests in tests/data.test.ts:
-   - logs.json has exactly 500 records, all within 24h before the demo clock.
-   - log type mix is within +/-5% of section 5.
-   - every scenario needle exists with exact values.
-   - every alert entity references a real user/host/ip in the data.
-6. Run generate, commit the JSON.
+1. Create a Vite + React + TypeScript (strict) app with React Router. Client only.
+2. Install: tailwindcss, shadcn/ui (init, Radix based), zustand, @tanstack/react-table, @tanstack/react-virtual, recharts, motion, cmdk, lucide-react, geist, date-fns, date-fns-tz. Dev: vitest, @playwright/test, @faker-js/faker, tsx.
+3. Add the color, type, radius, and spacing tokens from PLAN.md section 7 as CSS variables and Tailwind theme values. Load Geist Sans and Geist Mono.
+4. Add vercel.json rewriting all routes to /index.html.
+5. Scripts: dev, build, preview, lint, typecheck, test, e2e, generate.
+6. src/lib/time.ts with the fixed demo clock and IST/UTC format helpers, with unit tests.
+7. Router with placeholder routes for every page in PLAN.md section 6, a root error boundary with a designed fallback, and a designed 404.
+8. Playwright config that runs against `vite preview`. One smoke test: every route loads with no console errors, and a hard refresh on /tickets/TKT-24817 does not 404.
 
-Show me 5 sample noise rows and all Scenario A rows when done.
+List assumptions first. Then build. Show test output.
 ```
-Commit: `feat(data): seeded dataset with scenario needles`
+Commit `chore: v2 foundation` and push. Confirm the Vercel deploy and refresh a deep link yourself.
 
 ---
 
-## Phase 2: App shell, splash, start screen
+## Phase 1: Data and case engine
 
 ```
-Read PLAN.md sections 6, 8, 9.
+Read PLAN.md sections 3, 4, 5, 11.
 
-1. App shell: collapsible graphite left nav (Alerts, Investigate, Logs, Policies, Remote networks, Brief), top bar (tenant "Acme Corp", global search trigger, IST/UTC toggle, Guide toggle, Annotations toggle, theme toggle, user menu with "Reset demo").
-2. Splash: shown on first visit only (remember in localStorage), skippable with any key or click. Shows "Triage Console" and "Built by Sarthak Pant". One orchestrated entrance moment, under 2 seconds, nothing else animates. Respect reduced motion.
-3. Start screen after splash: three scenario cards (A, B, C) with one line each describing the situation as the user would hear it (not the answer), plus "Explore freely". Picking a scenario turns Guide on and opens that alert's investigation.
-4. Zustand store skeleton in src/lib/store.ts: timezone, guideOn, annotationsOn, theme, activeScenario. Persisted safely.
-5. Command palette (Cmd/Ctrl+K) with navigation entries only for now.
-6. Responsive notice below 1024px.
+1. src/types.ts: types for Ticket, Message, ScopeQuestion, LogRecord (traffic, url, threat, decryption, globalprotect, system, config), SecurityRule, AddressObject, ServiceObject, AppGroup, DecryptionRule, RemoteNetwork, MobileUser, ConfigChange, PlatformAlert, User, Evidence.
+2. scripts/generate-data.ts with a fixed seed writing src/data/*.json with the counts in section 5.
+3. Hand-write every case record from section 4 with exact values: users, IPs, ports, times, rule names, service object, change ids, messages. Do not randomize them.
+4. Noise must be realistic for an enterprise on Prisma Access: real app names (ms-teams, slack-base, zoom, office365, salesforce-base, github-base, ssl, web-browsing, dns), realistic rule names, ports, zones, locations.
+5. Log fields must match what a PAN-OS engineer expects: receive time, type, src/dst IP, src/dst zone, src user, app, rule, action, session end reason, bytes, packets, ports, protocol, device/location, container.
+6. src/content: scope questions (section 3) with ids, and conversation scripts per case (customer replies keyed by question id and by events: acknowledge, approval request, retry, confirm).
+7. src/lib/case-engine.ts (zustand slice): per-ticket state (status, step, answered questions, pinned evidence, thread, approval, fix applied, verified, closed) with actions. Derived selectors: tunnel status for Pune, which rule a Meet flow matches, whether verify passes. Persist with try/catch, plus resetDemo().
+8. Unit tests: dataset counts and time range, every case needle exists with exact values, every reference resolves, case engine transitions for both cases (cannot verify before fix, cannot close before customer confirms).
 
-Done when: keyboard-only navigation works across shell, splash skip works, reset demo clears everything, lint/build/test pass.
+Print the Case 1 and Case 2 evidence rows when done.
 ```
-Commit: `feat(shell): app shell, splash, start screen`
+Commit `feat(data): seeded dataset and case engine`
 
 ---
 
-## Phase 3: Screen 1, Alerts queue
+## Phase 2: Developer splash and login
 
 ```
-Read PLAN.md section 7 (Screen 1) and 9.
+Read PLAN.md sections 6.1, 6.2, 7.
 
-Build /alerts:
-1. Severity summary as compact clickable filters (not big stat cards).
-2. Filter bar: severity, status, category, time range, assignee, text search. Active filters as removable chips. All filter state in URL search params.
-3. Table with TanStack: severity (icon + label), alert title + id, entities as mono chips, first seen (relative, absolute on hover, timezone aware), status, assignee. Default sort severity then time.
-4. Row hover quick actions: Assign to me, Mark false positive (updates store, toast).
-5. Keyboard: j/k to move, Enter to open, / to focus search.
-6. Loading skeleton on filter change (simulated 300ms), empty state with a "Clear filters" action.
-7. "Guided" badge on scenario alerts only when Guide is on.
+This is the first impression. Treat it like a flagship product launch, not a template.
 
-Done when: filters survive refresh via URL, keyboard flow works, lint/build/test pass.
+1. Splash exactly as section 6.1: animated network mesh on canvas or SVG, links converging into "Sarthak Pant", subtitle, progress line, crossfade to Login, skip on any key or click, once per session, reduced motion variant. 60fps, no layout shift, under 3.5s.
+2. Login exactly as section 6.2: split layout with live network visual (labeled nodes, Pune-Branch-01 pulsing amber), sign-in panel, show/hide password, caps lock warning, disabled SSO with tooltip, demo credentials card "admin / 12345" with "Fill for me".
+3. Auth: admin / 12345 only. Wrong: inline error, one shake, focus password. Right: "Signing in" then /home. Session in sessionStorage. Route guard redirects every app route to /login when signed out, and back to the original route after sign-in.
+4. Playwright: splash shows name and skips; wrong creds show the error; right creds land on /home; signed-out visit to /tickets/TKT-24817 redirects to login then back to that ticket. Screenshots of splash mid-animation, splash final frame, login, login error.
+
+Review the screenshots against section 7 before reporting. If it looks like a generic template, redo it.
 ```
-Commit: `feat(alerts): alerts queue`
+Commit `feat: developer splash and login`
 
 ---
 
-## Phase 4: Screen 2, Investigation workspace (logs)
+## Phase 3: Shell and Home grid
 
 ```
-Read PLAN.md section 7 (Screen 2) and 9. This is the most important screen. Take care.
+Read PLAN.md sections 6.3, 6.4, 7.
 
-1. Query parser in src/lib/query-parser.ts supporting PAN-OS style:
-   ( addr.src in 10.20.14.37 ) and ( app eq ssl ), operators eq, neq, in, contains, and, or, parentheses.
-   Fields: addr.src, addr.dst, user.src, app, rule, action, url.category, threat.name, port.dst, device.
-   Return either a predicate or an error with position. Write tests first (valid, invalid, nested), then implement.
-2. /investigate/[alertId]:
-   - Alert header with entities as chips, status, Resolve / Escalate buttons (Resolve goes to /resolve/[id]).
-   - Step rail: Scope time, Check logs, Verify in console, Resolve. Shows completion state.
-   - Time scope bar: prefilled from alert, +/-15 min default, presets (+/-5m, 15m, 1h), mini histogram of events that can be dragged to adjust.
-   - Correlated timeline strip: dots per log type across the window.
-   - Log tabs with counts: Traffic, Threat, URL, Decryption, System, Config.
-   - Query bar prefilled from alert entities, with autocomplete for fields and operators, inline error with the bad part underlined.
-   - Virtualized table, sticky header, column resize and show/hide, compact/comfortable density.
-   - Cell values (IP, user, rule) open a menu: Filter by, Exclude, Copy, Pin.
-   - Row click opens a right detail drawer with all fields and "Pin as evidence".
-   - Evidence tray listing pinned items, removable, reorderable, persisted per alert.
-3. /logs reuses the same components without an alert scope.
-
-Verify with Scenario A: opening ALR-1042 must show the decrypt-error traffic rows and the pinned-cert decryption rows within the default window.
-Done when: parser tests pass, A, B, C each surface their key evidence with default scope, lint/build/test pass.
+1. App shell: collapsible left nav with all items, top bar (tenant, command palette, demo clock with IST/UTC, Guide toggle, Annotations toggle, notifications bell, user menu with Reset demo and Sign out). Console drawer placeholder toggled with Ctrl+`.
+2. Command palette (cmdk): navigate to any page, open a ticket by id, search users, IPs, rules.
+3. Home as a 12-column grid with tiles of different sizes, exactly the tiles in 6.4, all fed by seeded data and case engine state. Pune shows down until Case 2 is fixed; the stun spike and Pune traffic drop are visible in the charts.
+4. Each tile links to its page with filters applied (e.g. Recent config changes opens Config audit filtered to the last 24h).
+5. Playwright: home renders all tiles with data, each tile link lands on a non-empty page, palette opens a ticket. Screenshot of Home.
 ```
-Commit: `feat(investigate): workspace, query parser, evidence`
+Commit `feat: shell and home`
 
 ---
 
-## Phase 5: Console
+## Phase 4: Tickets and the workspace frame
 
 ```
-Read PLAN.md sections 4 (console commands per scenario) and 7 (Console help).
+Read PLAN.md sections 4, 6.5, 6.6.
 
-1. src/lib/console/commands.ts: a command registry. Each command has: pattern, mode (prisma | branch), help text, and a handler that returns output text built from src/data, not hardcoded strings where the data exists.
-2. Implement every command listed in section 4 for A, B, C with realistic PAN-OS style output formatting. Add 3-4 general commands (show system info, show clock, help).
-3. Scenario B state: after the fix is applied in Screen 3, test vpn ipsec-sa and show vpn ipsec-sa must show the tunnel up. Scenario A: after the no-decrypt rule is added, test decryption-policy-match must match it. Read this state from the store.
-4. Console UI: bottom drawer, always dark, resizable, Ctrl+` toggle, mode switch (Prisma diagnostics / Branch firewall CLI), prompt shows mode and device (e.g. admin@pune-fw-01>).
-   - Tab completion, Up/Down history, `?` and `help` list commands for current mode.
-   - Unknown command: say it is unknown and suggest the closest match.
-   - Copy button per output block, "Pin output as evidence" per block.
-5. Tests for the command parser and for scenario state changes.
-
-Done when: each scenario's verify command can be run and pinned, tests pass, lint/build pass.
+1. Tickets page: card grid (default) and table toggle, tabs Active, Waiting on customer, Resolved, All. Cards per 6.5 with live SLA rings from the demo clock. 2 workable tickets + 10 history tickets.
+2. History tickets open a read-only workspace showing their closed thread and RCA.
+3. Ticket workspace layout per 6.6: header, playbook rail (9 steps with done/active/locked states and reasons), active step panel area, right ticket thread with customer, engineer, internal note, and system message styles, evidence list, reply box with templates.
+4. Implement step 1 Intake and step 2 Scope fully for both cases: Ask customer per question, Ask all at once, typing indicator, scripted replies from src/content, Mark as key finding, live Scope summary card, step unlock rules with reasons.
+5. Unknown ticket id shows a designed not-found state, never a crash.
+6. Playwright: open both tickets from the grid and by hard refresh; complete Intake and Scope for Case 1; bad id shows not-found. Screenshots of Tickets grid, workspace at Intake, workspace at Scope with answers.
 ```
-Commit: `feat(console): diagnostic console with branch CLI`
+Commit `feat: tickets and scoping`
 
 ---
 
-## Phase 6: Screen 3, Resolution
+## Phase 5: Evidence, logs explorer, compare, reproduce
 
 ```
-Read PLAN.md section 7 (Screen 3).
+Read PLAN.md sections 4, 6.6 steps 3 to 5, 6.7 Logs.
 
-Build /resolve/[alertId]:
-1. Root cause selector + free text.
-2. Outcome panel by type:
-   - Policy fix (A): before/after rule table diff, new rule No-Decrypt-Pinned-SaaS highlighted in position above Decrypt-All-Outbound. "Stage change" button.
-   - Config fix (B): side-by-side config diff for ipsec-prisma, mismatch highlighted. "Apply fix on pune-fw-01" button.
-   - Escalation (C): package preview (timeline, IOCs, pinned evidence, affected assets), "Add host to quarantine group", "Copy as text", "Download .md".
-3. Pinned evidence carried over. Closure note pre-drafted from evidence and root cause, editable.
-4. Verify step: runs the scenario's verify command and shows pass/fail inline.
-5. Final button (Resolve alert / Escalate to IR) disabled until verify passes or package generated, with a tooltip saying why.
-6. Audit trail listing every action taken in this alert with time and actor (Priya Nair).
-7. Completing sets alert status in the store and returns to /alerts with a toast.
-
-Done when: A, B, C each complete end to end and status updates show in the queue.
+1. src/lib/query-parser.ts (PAN-OS style): `( addr.src in 10.20.31.44 ) and ( port.dst geq 19302 )`. Fields: addr.src, addr.dst, user.src, app, rule, action, zone.src, zone.dst, port.dst, proto, container, location, type. Operators: eq, neq, in, contains, geq, leq, and, or, parentheses. Returns a predicate or an error with position. Write tests first.
+2. Log explorer component: type tabs with counts, query bar with autocomplete and inline error underline, time window bar with presets and a draggable histogram, virtualized table with sticky header, column show/hide, density toggle, cell menu (Filter by, Exclude, Copy, Pin), row detail drawer with all fields and Pin.
+3. Step 3 Evidence: explorer pre-scoped from Scope (failing user and time window), plus "Config changes in this window" strip linking to Config audit.
+4. Step 4 Compare: failing vs working user side by side with the diff table, differences highlighted, Pin comparison. Case 2 compares Pune with a healthy branch (Mumbai-Branch-02).
+5. Step 5 Reproduce: Ask customer to retry, 10 second live stream with new rows animating in, Live badge, packet capture table per case, Pin.
+6. /logs page uses the same explorer unscoped.
+7. Playwright: Case 1 evidence shows Block-QUIC drops for ankit at 10:02; compare highlights rule and container differences; reproduce adds new rows; /logs shows 600 records and a query filters them. Screenshots of each step.
 ```
-Commit: `feat(resolve): resolution, verify gate, audit trail`
+Commit `feat: evidence, compare, reproduce`
 
 ---
 
-## Phase 7: Guide mode and Annotations
+## Phase 6: Prove: console and troubleshooting tools
 
 ```
-Read PLAN.md section 7 (Guidance) and 3.
+Read PLAN.md sections 4, 6.6 step 6, 6.7 Troubleshooting, 6.8.
 
-1. src/content/guide-steps.ts: steps per scenario. Each step: target element id, title, body (what to do and why a TAC engineer does it), optional "Do it for me" action.
-   Scenario A must start with: "The user said around 2:20 PM. Set the window first." 
-2. Coach mark component anchored to the target, with Next, Back, Skip, Do it for me. Progress synced with the step rail. Resume where left off.
-3. src/content/annotations.ts: 5 to 7 pins per screen (Alerts, Investigate, Resolve). Each pin: design decision, user problem, metric it moves (input/output/check from PLAN.md section 10).
-4. Annotations toggle shows numbered pins; clicking opens a popover. Pins do not block interaction.
-5. Both work with keyboard and close with Esc.
-
-Write all copy in plain, short sentences. No em dashes. Show me all guide and annotation copy for review before wiring it in.
+1. src/lib/console: command registry with pattern, mode, help, and handler reading data and case engine state. Implement every command in section 4 plus the general ones in 6.8, with realistic PAN-OS output formatting (tables, aligned columns, headers like the real CLI).
+2. Console drawer per 6.8: two modes, prompt per mode, tab completion, history, help, closest-match suggestions, copy and Pin output.
+3. Troubleshooting page and Step 6 panel: Security policy match (pre-filled per case), Ping, Traceroute, Tunnel status. Results come from case engine state.
+4. Case 1 policy match returns Block-QUIC deny before fix. Case 2 IKE up, IPsec SA missing, ikemgr.log shows the DH group mismatch.
+5. Unit tests for command parsing and for outputs changing with case state. Playwright: run the Case 2 commands in the console and pin one; run policy match for Case 1. Screenshots of console in both modes and the tools page.
 ```
-Commit: `feat(guide): guided mode and design annotations`
+Commit `feat: console and troubleshooting`
 
 ---
 
-## Phase 8: Brief page, docs, polish, submission
+## Phase 7: Fix, verify, RCA, close
 
 ```
-Read PLAN.md sections 2, 10, 11, 14.
+Read PLAN.md sections 4, 6.6 steps 7 to 9.
 
-1. /brief page: problem, persona, write-up, dev action items, how to review, "Built by Sarthak Pant".
-2. docs/WRITEUP.md from section 10. Must fit one printed page.
-3. docs/DEV_ACTION_ITEMS.md from section 11, each with a one-line why and an acceptance check.
-4. Polish pass against section 9 checklist. List any item not met and fix it.
-5. Run Lighthouse accessibility on /alerts, fix to >= 95.
-6. README.md: one-paragraph problem, persona, live link placeholder, "Review in 5 minutes" steps, 3 annotated screenshots (placeholders in docs/screenshots/ for me to capture), links to docs, local setup, tech stack.
-
-Done when: every item in PLAN.md section 14 passes. Report each item as pass/fail.
+1. Step 7 Fix. Case 1: rule table diff (before/after) and object removal, Request approval posts to thread, scripted approval, Push config job with stages (queued, validating, pushing to India West, India South, success). Case 2: branch vs Prisma crypto profile diff, revert command block with copy, Request customer action, scripted "Applied and committed", state flips.
+2. Step 8 Verify: one-click re-run of the original failing test now passes; Ask customer to confirm; scripted confirmation. Pune turns up on Home and Remote networks; Pune traffic resumes in logs; Meet flows now match Allow-Collab-Apps.
+3. Step 9: auto-drafted RCA (summary, timeline from pinned evidence, root cause, fix, prevention), editable, Close ticket enabled only after confirmation with a reason when disabled. Closing moves the ticket to Resolved and returns to Tickets with a toast.
+4. Audit trail at the bottom of the workspace showing every action with time and actor.
+5. Playwright: Case 1 end to end from login to closed; Case 2 end to end; Reset demo restores both. Screenshots of fix, verify, RCA for both cases.
 ```
-Commit: `docs: brief, write-up, dev items, README`
-Then: capture screenshots with Annotations on, add to docs/screenshots/, fill the live link in README, push.
+Commit `feat: fix, verify, close`
 
 ---
 
-## Review prompt (run after every phase)
+## Phase 8: Supporting pages
 
 ```
-Act as a strict reviewer for this phase. Compare what was built against PLAN.md and .cursor/rules.
-1. List anything built that the phase did not ask for.
-2. List anything the phase asked for that is missing or partial.
-3. List UX nuance gaps from PLAN.md section 9 on the screens touched.
-4. List any hardcoded colors, all-caps labels, em/en dashes, missing focus states, or missing loading/empty/error states.
-5. Walk through the relevant scenario as a first-time user and note every point of confusion.
-Do not fix anything yet. Give me the list, ranked by impact.
+Read PLAN.md section 6.7.
+
+Build Policies (security and decryption tabs, grouped by container, hit counts, modified markers, rule drawer with history), Objects (all object types, where-used links), Remote networks (table plus tunnel history drawer), Mobile users, Config audit (diff view), Brief.
+Every page: filters, search, loading, empty, and error states, links between related items (rule to object, change to rule, network to its logs).
+Playwright: every page shows seeded data and each cross-link lands correctly. Screenshots of every page.
+```
+Commit `feat: supporting pages`
+
+---
+
+## Phase 9: Guide, annotations, docs, final QA
+
+```
+Read PLAN.md sections 6.9, 8, 9, 12.
+
+1. Guide: coach marks per playbook step for both cases, anchored to real elements, with Next, Back, Skip, Do it for me. Never blocks the real UI. Resumes where left off. First line for Case 1: "Do not open logs yet. First find out when it started, who is affected, and what changed."
+2. Annotations: 5 to 7 numbered pins each on Home, Tickets, and the Ticket workspace with design decision, user problem, and metric.
+3. Show me all guide and annotation copy for review before wiring it in.
+4. docs/WRITEUP.md (one printed page), docs/DEV_ACTION_ITEMS.md, README.md per section 12 with screenshot slots in docs/screenshots/.
+5. Final QA: run every item in section 12 and report pass/fail per item. Run Lighthouse accessibility on Home and Tickets. Fix anything failing.
+```
+Commit `docs: guide, annotations, write-up, README`. Capture screenshots with Annotations on, add them to the README, push.
+
+---
+
+## Review prompt (after every phase)
+
+```
+Review this phase as two people: a strict Apple-level product designer and a Palo Alto Networks TAC engineer with 15 years of experience.
+
+1. Click through every flow touched in this phase on the production build. List every button that does nothing, every crash, every empty view.
+2. List anything PLAN.md asked for that is missing or partial, and anything built that was not asked for.
+3. Technical accuracy: anything a real PAN-OS or Prisma Access engineer would find wrong (CLI output, log fields, policy order, IKE/IPsec behaviour).
+4. Design: open the screenshots. List anything that looks generic, cramped, misaligned, low contrast, or inconsistent with section 7. Check for raw hex, all-caps labels, em/en dashes, missing focus, missing loading/empty/error states.
+5. Rank everything by impact. Do not fix yet.
+```
+
+## If something breaks on Vercel
+
+```
+The deployed app shows "<paste the error>" when I <paste what you clicked>. Reproduce it with Playwright against the production build, read the browser console, find the root cause, write a failing test, fix it, and show the test passing. Do not guess.
 ```

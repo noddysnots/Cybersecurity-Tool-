@@ -1,52 +1,37 @@
 import { formatInTimeZone } from "date-fns-tz";
-import { formatDistanceStrict, parseISO } from "date-fns";
 
-/** Fixed demo clock: Tue 6 Oct 2026, 15:00 IST. Never use the real system clock for data. */
-export const DEMO_CLOCK_ISO = "2026-10-06T09:30:00.000Z"; // 15:00 IST
-export const DEMO_CLOCK = new Date(DEMO_CLOCK_ISO);
-
+/** Fixed demo clock: Tue 6 Oct 2026, 12:05 IST = 2026-10-06T06:35:00.000Z */
+export const DEMO_NOW_ISO = "2026-10-06T06:35:00.000Z";
+export const DEMO_NOW = new Date(DEMO_NOW_ISO);
 export const IST_TZ = "Asia/Kolkata";
 export const UTC_TZ = "UTC";
 
-export type TimezoneMode = "IST" | "UTC";
+export type TimeZoneMode = "IST" | "UTC";
 
-export function getDemoClock(): Date {
-  return new Date(DEMO_CLOCK.getTime());
+export function now(): Date {
+  return new Date(DEMO_NOW.getTime());
 }
 
-export function getTimezoneId(mode: TimezoneMode): string {
-  return mode === "IST" ? IST_TZ : UTC_TZ;
+export function toZone(date: Date, zone: TimeZoneMode): string {
+  const tz = zone === "IST" ? IST_TZ : UTC_TZ;
+  return formatInTimeZone(date, tz, "yyyy-MM-dd'T'HH:mm:ssXXX");
 }
 
-export function formatAbsolute(
-  date: Date | string,
-  mode: TimezoneMode,
-  pattern = "dd MMM yyyy HH:mm:ss",
-): string {
-  const d = typeof date === "string" ? parseISO(date) : date;
-  const tz = getTimezoneId(mode);
-  const suffix = mode === "IST" ? " IST" : " UTC";
-  return `${formatInTimeZone(d, tz, pattern)}${suffix}`;
+export function formatDemoClock(zone: TimeZoneMode = "IST"): string {
+  const tz = zone === "IST" ? IST_TZ : UTC_TZ;
+  const label = zone === "IST" ? "IST" : "UTC";
+  return `${formatInTimeZone(DEMO_NOW, tz, "EEE d MMM yyyy, HH:mm")} ${label}`;
 }
 
-export function formatRelative(
-  date: Date | string,
-  mode: TimezoneMode = "IST",
-): string {
-  const d = typeof date === "string" ? parseISO(date) : date;
-  const base = getDemoClock();
-  const distance = formatDistanceStrict(d, base, { addSuffix: true });
-  // date-fns uses "ago"/"in"; keep sentence case, no dashes
-  void mode;
-  return distance;
+export function formatAbsolute(date: Date, zone: TimeZoneMode = "IST"): string {
+  const tz = zone === "IST" ? IST_TZ : UTC_TZ;
+  const label = zone === "IST" ? "IST" : "UTC";
+  return `${formatInTimeZone(date, tz, "d MMM yyyy, HH:mm:ss")} ${label}`;
 }
 
-export function hoursBeforeDemo(hours: number): Date {
-  return new Date(DEMO_CLOCK.getTime() - hours * 60 * 60 * 1000);
-}
-
-export function isWithinLast24h(date: Date | string): boolean {
-  const d = typeof date === "string" ? parseISO(date) : date;
-  const start = hoursBeforeDemo(24);
-  return d.getTime() >= start.getTime() && d.getTime() <= DEMO_CLOCK.getTime();
+export function formatBothZones(date: Date): { ist: string; utc: string } {
+  return {
+    ist: formatAbsolute(date, "IST"),
+    utc: formatAbsolute(date, "UTC"),
+  };
 }
