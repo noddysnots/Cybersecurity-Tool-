@@ -1,0 +1,28 @@
+/** Home grid tile copy. No em or en dashes. */
+
+export const homeCopy = {
+  pageTitle: "Home",
+  pageSubtitle: "Mission control for Acme Corp",
+  myTickets: "My active tickets",
+  myTicketsEmpty: "No active tickets in your queue.",
+  openTicket: "Open",
+  platformHealth: "Platform health",
+  locationsUp: "Prisma Access locations",
+  mobileUsers: "Mobile users connected",
+  remoteNetworks: "Remote networks",
+  puneDown: "Pune-Branch-01 down",
+  puneUp: "Pune-Branch-01 up",
+  recentConfig: "Recent config changes",
+  recentConfigFilter: "Last 24 hours",
+  topBlocked: "Top blocked apps",
+  topBlockedHint: "stun spike since 09:00 IST",
+  trafficTrend: "Traffic trend",
+  trafficTrendHint: "Pune branch drop at 11:42 IST",
+  platformAlerts: "Platform alerts",
+  openAlerts: "Open alerts",
+  slaLeft: "left",
+  slaBreach: "breached",
+  priority: "Priority",
+  lastMessage: "Last customer message",
+  viewAll: "View all",
+} as const;
