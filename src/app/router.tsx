@@ -2,11 +2,17 @@ import { createBrowserRouter } from "react-router-dom";
 
 import { ErrorBoundary } from "@/app/ErrorBoundary";
 import { RequireAuth } from "@/app/guards";
+import { BriefPage } from "@/app/routes/BriefPage";
+import { ConfigAuditPage } from "@/app/routes/ConfigAuditPage";
 import { HomePage } from "@/app/routes/HomePage";
 import { LoginPage } from "@/app/routes/LoginPage";
 import { LogsPage } from "@/app/routes/LogsPage";
+import { MobileUsersPage } from "@/app/routes/MobileUsersPage";
 import { NotFoundPage } from "@/app/routes/NotFoundPage";
+import { ObjectsPage } from "@/app/routes/ObjectsPage";
 import { PlaceholderPage } from "@/app/routes/PlaceholderPage";
+import { PoliciesPage } from "@/app/routes/PoliciesPage";
+import { RemoteNetworksPage } from "@/app/routes/RemoteNetworksPage";
 import { SplashPage } from "@/app/routes/SplashPage";
 import { TicketsPage } from "@/app/routes/TicketsPage";
 import { TicketWorkspacePage } from "@/app/routes/TicketWorkspacePage";
@@ -64,11 +70,7 @@ export const router = createBrowserRouter([
             path: "/policies",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Policies"
-                  path="/policies"
-                  description="Security and decryption policy tables arrive in Phase 8."
-                />
+                <PoliciesPage />
               </ErrorBoundary>
             ),
           },
@@ -76,11 +78,7 @@ export const router = createBrowserRouter([
             path: "/objects",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Objects"
-                  path="/objects"
-                  description="Address, service, and application objects arrive in Phase 8."
-                />
+                <ObjectsPage />
               </ErrorBoundary>
             ),
           },
@@ -88,11 +86,7 @@ export const router = createBrowserRouter([
             path: "/remote-networks",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Remote networks"
-                  path="/remote-networks"
-                  description="Branch tunnel status arrives in Phase 8."
-                />
+                <RemoteNetworksPage />
               </ErrorBoundary>
             ),
           },
@@ -100,11 +94,7 @@ export const router = createBrowserRouter([
             path: "/mobile-users",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Mobile users"
-                  path="/mobile-users"
-                  description="GlobalProtect user list arrives in Phase 8."
-                />
+                <MobileUsersPage />
               </ErrorBoundary>
             ),
           },
@@ -112,11 +102,7 @@ export const router = createBrowserRouter([
             path: "/config-audit",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Config audit"
-                  path="/config-audit"
-                  description="Config change history arrives in Phase 8."
-                />
+                <ConfigAuditPage />
               </ErrorBoundary>
             ),
           },
@@ -132,11 +118,7 @@ export const router = createBrowserRouter([
             path: "/brief",
             element: (
               <ErrorBoundary>
-                <PlaceholderPage
-                  title="Brief"
-                  path="/brief"
-                  description="Problem, persona, and review notes arrive in Phase 9."
-                />
+                <BriefPage />
               </ErrorBoundary>
             ),
           },

@@ -239,7 +239,8 @@ test.describe("Phase 7 fix, verify, RCA, close", () => {
     await expect(page.getByTestId("pune-health")).toContainText("Pune-Branch-01 up");
 
     await page.goto("/remote-networks", { waitUntil: "networkidle" });
-    await expect(page.getByText(/Pune-Branch-01 up/)).toBeVisible();
+    await expect(page.getByTestId("seeded-summary")).toContainText("Pune-Branch-01 up");
+    await expect(page.getByTestId("rn-status-rn-pune-branch-01")).toContainText("Up");
   });
 
   test("Reset demo restores both cases", async ({ page }) => {

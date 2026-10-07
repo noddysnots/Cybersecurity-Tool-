@@ -12,7 +12,8 @@ Source of truth: PLAN.md, CURSOR_PROMPTS.md, .cursor/rules/project.mdc (installe
 - Phase 5: complete
 - Phase 6: complete
 - Phase 7: complete
-- Next: Phase 8 supporting pages
+- Phase 8: complete
+- Next: Phase 9 guide, annotations, docs, final QA
 
 ## Assumptions / defaults
 - Fresh Vite SPA wipe of Next app on branch v2.
@@ -31,10 +32,12 @@ Source of truth: PLAN.md, CURSOR_PROMPTS.md, .cursor/rules/project.mdc (installe
 - Phase 5: PAN-OS query parser (tests first), shared LogExplorer (type tabs+counts, query autocomplete+error underline, time presets+draggable histogram, virtualized table, columns, density, cell menu, detail drawer+Pin), Evidence pre-scoped + config strip, Compare (Case 1 users / Case 2 branches) with highlighted diff + Pin, Reproduce live stream + pcap + Pin, `/logs` unscoped explorer. Playbook unlocks Evidence after When+Who, Compare after evidence pin/complete, Reproduce after compare pin. Screenshots reviewed: workspace-evidence, workspace-compare, workspace-reproduce, logs. lint/typecheck/test/build/e2e passed (33 unit, 18 e2e).
 - Phase 6: Console command registry (`src/lib/console`) with every Case 2 CLI command plus general PAN-OS commands; realistic table/aligned output from case engine. Console drawer: Prisma diagnostics vs Branch firewall CLI, prompts, tab completion, history, help/?, closest-match, copy+Pin, resize. Troubleshooting page (policy match, ping, traceroute, tunnel status). Prove step: Case 1 policy match Block-QUIC deny; Case 2 suggested branch CLI chips. Outputs flip after fix. Screenshots reviewed: console-prisma, console-branch, tools. lint/typecheck/test/build/e2e passed (40 unit, 21 e2e).
 - Phase 7: Fix (Case 1 rule diff + svc-quic-block removal, approval, push stages ~6s; Case 2 crypto diff + revert command + customer apply flips Pune), Verify (re-run policy/tunnel test, Ask customer confirm), RCA editable draft + Close only after confirm (Resolved + toast), workspace audit trail. Home/remote networks/Pune traffic resume from case-engine. Screenshots: case1-fix/verify/rca, case2-fix/verify/rca. lint/typecheck/test/build/e2e passed (41 unit, 24 e2e).
+- Phase 8: Supporting pages replace placeholders. Policies (security/decryption tabs, container groups, hit counts, Block-QUIC Modified 12h ago, rule drawer + CHG history). Objects (address, groups, services, app groups, where-used svc-quic-block to Block-QUIC). Remote networks (12 sites, Pune from case-engine, tunnel history drawer + crypto mismatch). Mobile users (connected table). Config audit (CHG-5120/CHG-4471 before/after diffs). Brief (problem, persona, playbook, write-up/dev items, how to review, Built by Sarthak Pant). Filters/search/loading/empty/error + cross-links. Troubleshooting still works. Screenshots: policies-block-quic, policies-decryption, objects-svc-quic, remote-networks-pune, mobile-users, config-audit-5120/4471, brief, troubleshooting-phase8. lint/typecheck/test/build/e2e passed (44 unit, 32 e2e).
 
-## Open / polish notes (Phase 7)
-- Audit trail timestamps all use the fixed demo clock (12:05 IST), so entries share the same second.
-- Case 1 fix screenshot is taken before approval/push (diff + disabled Push); push stages appear mid-flow and in the audit trail on verify.
+## Open / polish notes (Phase 8)
+- Brief credits and write-up sections sit below the fold at 1440x900; first viewport shows problem, persona, playbook.
+- Policy/object/config drawers overlay the right side of dense tables; usable but can hide trailing columns until closed.
+- Audit trail timestamps all use the fixed demo clock (12:05 IST), so entries share the same second (carried from Phase 7).
 - Console drawer default height (~260px) still dense on Intake (carried from Phase 6).
 - URL query params on `/logs` still not applied as PAN-OS query clauses (carried from Phase 5).
 - Case 2 healthy branch display name remains Mumbai-Branch-02 over seed id `rn-mumbai-hq-01` (carried from Phase 5).

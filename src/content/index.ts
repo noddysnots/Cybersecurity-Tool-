@@ -21,3 +21,12 @@ export {
   type HistoryRca,
   type HistoryTicketDetail,
 } from "./history";
+export {
+  briefCopy,
+  configAuditCopy,
+  mobileUsersCopy,
+  objectsCopy,
+  policiesCopy,
+  remoteNetworksCopy,
+  supportingShared,
+} from "./supporting";
