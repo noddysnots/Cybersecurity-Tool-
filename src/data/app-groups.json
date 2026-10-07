@@ -1,0 +1,92 @@
+[
+  {
+    "id": "appgrp-collab",
+    "name": "app-collab",
+    "members": [
+      "google-meet",
+      "ms-teams",
+      "slack-base",
+      "zoom"
+    ],
+    "description": "Collaboration applications",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-office",
+    "name": "app-office365",
+    "members": [
+      "office365",
+      "outlook-web",
+      "ms-office365-base"
+    ],
+    "description": "Microsoft 365",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-saas",
+    "name": "app-saas-core",
+    "members": [
+      "salesforce-base",
+      "boxnet",
+      "dropbox",
+      "servicenow"
+    ],
+    "description": "Core SaaS",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-dev",
+    "name": "app-developer",
+    "members": [
+      "github-base",
+      "ssl",
+      "web-browsing"
+    ],
+    "description": "Developer tools",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-infra",
+    "name": "app-infra",
+    "members": [
+      "dns",
+      "ntp",
+      "icmp",
+      "ssl"
+    ],
+    "description": "Infrastructure",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-web",
+    "name": "app-web-general",
+    "members": [
+      "web-browsing",
+      "ssl",
+      "http-proxy"
+    ],
+    "description": "General web",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-identity",
+    "name": "app-identity",
+    "members": [
+      "okta",
+      "ssl"
+    ],
+    "description": "Identity providers",
+    "container": "Shared"
+  },
+  {
+    "id": "appgrp-risky",
+    "name": "app-high-risk",
+    "members": [
+      "tor",
+      "proxy",
+      "unknown-udp"
+    ],
+    "description": "High risk apps",
+    "container": "Shared"
+  }
+]

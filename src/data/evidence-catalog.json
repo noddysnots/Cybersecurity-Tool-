@@ -1,0 +1,65 @@
+[
+  {
+    "id": "ev-ankit-drop-1",
+    "ticketId": "TKT-24817",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "traffic",
+    "label": "ankit.verma drop UDP 19305 Block-QUIC at 10:02:14 IST",
+    "refId": "log-traffic-ankit-100214",
+    "note": "Failing Meet media attempt"
+  },
+  {
+    "id": "ev-ankit-drop-2",
+    "ticketId": "TKT-24817",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "traffic",
+    "label": "ankit.verma drop UDP 19305 Block-QUIC at 10:02:31 IST",
+    "refId": "log-traffic-ankit-100231",
+    "note": "Retry still dropped"
+  },
+  {
+    "id": "ev-sana-allow",
+    "ticketId": "TKT-24817",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "traffic",
+    "label": "sana.khan allow google-meet Allow-Collab-Apps",
+    "refId": "log-traffic-sana-100540",
+    "note": "Working branch user"
+  },
+  {
+    "id": "ev-chg-5120",
+    "ticketId": "TKT-24817",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "config",
+    "label": "CHG-5120 Block-QUIC",
+    "refId": "cfg-chg-5120",
+    "note": "Change that introduced the bad service object"
+  },
+  {
+    "id": "ev-pune-alert",
+    "ticketId": "TKT-24823",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "network",
+    "label": "Pune-Branch-01 tunnel down",
+    "refId": "ALT-88421",
+    "note": "Platform alert at 11:42:08 IST"
+  },
+  {
+    "id": "ev-pune-system",
+    "ticketId": "TKT-24823",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "system",
+    "label": "NO_PROPOSAL_CHOSEN peer 203.0.113.10",
+    "refId": "log-system-pune-np-114208",
+    "note": "Phase 2 failure"
+  },
+  {
+    "id": "ev-chg-4471",
+    "ticketId": "TKT-24823",
+    "pinnedAt": "2026-10-06T06:35:00.000Z",
+    "source": "config",
+    "label": "CHG-4471 dh-group group19",
+    "refId": "cfg-chg-4471",
+    "note": "Branch crypto drift"
+  }
+]

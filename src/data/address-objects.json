@@ -1,0 +1,195 @@
+[
+  {
+    "id": "addr-meet-media",
+    "name": "Google-Meet-Media",
+    "type": "ip-netmask",
+    "value": "74.125.250.0/24",
+    "members": [],
+    "description": "Google Meet media ranges (representative)",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-pune-subnet",
+    "name": "Pune-Branch-Subnet",
+    "type": "ip-netmask",
+    "value": "10.60.0.0/16",
+    "members": [],
+    "description": "Pune branch LAN",
+    "container": "Remote Networks"
+  },
+  {
+    "id": "addr-blr-subnet",
+    "name": "Bengaluru-Branch-Subnet",
+    "type": "ip-netmask",
+    "value": "10.50.0.0/16",
+    "members": [],
+    "description": "Bengaluru branch LAN",
+    "container": "Remote Networks"
+  },
+  {
+    "id": "addr-mu-pool",
+    "name": "GP-Mobile-Pool",
+    "type": "ip-netmask",
+    "value": "10.20.0.0/16",
+    "members": [],
+    "description": "GlobalProtect mobile user pool",
+    "container": "Mobile Users"
+  },
+  {
+    "id": "addr-rfc1918",
+    "name": "RFC1918-Private",
+    "type": "group",
+    "value": "group",
+    "members": [
+      "Private-10",
+      "Private-172",
+      "Private-192"
+    ],
+    "description": "Private address space",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-private-10",
+    "name": "Private-10",
+    "type": "ip-netmask",
+    "value": "10.0.0.0/8",
+    "members": [],
+    "description": "10/8",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-private-172",
+    "name": "Private-172",
+    "type": "ip-netmask",
+    "value": "172.16.0.0/12",
+    "members": [],
+    "description": "172.16/12",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-private-192",
+    "name": "Private-192",
+    "type": "ip-netmask",
+    "value": "192.168.0.0/16",
+    "members": [],
+    "description": "192.168/16",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-prisma-india-west",
+    "name": "Prisma-India-West",
+    "type": "fqdn",
+    "value": "india-west.gpcloudservice.com",
+    "members": [],
+    "description": "Prisma Access India West",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-okta",
+    "name": "Okta-SaaS",
+    "type": "fqdn",
+    "value": "acme.okta.com",
+    "members": [],
+    "description": "Okta tenant",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-office365",
+    "name": "Office365-Endpoints",
+    "type": "group",
+    "value": "group",
+    "members": [
+      "O365-Exchange",
+      "O365-SharePoint"
+    ],
+    "description": "Office 365 address group",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-o365-exch",
+    "name": "O365-Exchange",
+    "type": "fqdn",
+    "value": "outlook.office365.com",
+    "members": [],
+    "description": "Exchange Online",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-o365-sp",
+    "name": "O365-SharePoint",
+    "type": "fqdn",
+    "value": "acme.sharepoint.com",
+    "members": [],
+    "description": "SharePoint Online",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-dns-google",
+    "name": "DNS-Google",
+    "type": "ip-netmask",
+    "value": "8.8.8.8/32",
+    "members": [],
+    "description": "Google DNS",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-dns-cloudflare",
+    "name": "DNS-Cloudflare",
+    "type": "ip-netmask",
+    "value": "1.1.1.1/32",
+    "members": [],
+    "description": "Cloudflare DNS",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-pune-peer",
+    "name": "Pune-Peer-Public",
+    "type": "ip-netmask",
+    "value": "203.0.113.10/32",
+    "members": [],
+    "description": "Pune branch public peer",
+    "container": "Remote Networks"
+  },
+  {
+    "id": "addr-finance-servers",
+    "name": "Finance-Servers",
+    "type": "ip-range",
+    "value": "10.10.40.10-10.10.40.50",
+    "members": [],
+    "description": "Finance app servers",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-collab-dst",
+    "name": "Collaboration-Destinations",
+    "type": "group",
+    "value": "group",
+    "members": [
+      "Google-Meet-Media",
+      "Office365-Endpoints"
+    ],
+    "description": "Collaboration destinations",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-sinkhole",
+    "name": "DNS-Sinkhole",
+    "type": "ip-netmask",
+    "value": "72.5.65.111/32",
+    "members": [],
+    "description": "Threat sinkhole",
+    "container": "Shared"
+  },
+  {
+    "id": "addr-branch-group",
+    "name": "All-Branch-Subnets",
+    "type": "group",
+    "value": "group",
+    "members": [
+      "Pune-Branch-Subnet",
+      "Bengaluru-Branch-Subnet"
+    ],
+    "description": "Branch LAN group",
+    "container": "Remote Networks"
+  }
+]

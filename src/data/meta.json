@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-10-06T06:35:00.000Z",
+  "seed": 24817,
+  "demoNow": "2026-10-06T06:35:00.000Z",
+  "windowStart": "2026-10-05T06:35:00.000Z",
+  "windowEnd": "2026-10-06T06:35:00.000Z",
+  "counts": {
+    "logs": 600,
+    "securityRules": 32,
+    "objects": 40,
+    "addressObjects": 20,
+    "serviceObjects": 12,
+    "appGroups": 8,
+    "decryptionRules": 6,
+    "remoteNetworks": 12,
+    "mobileUsers": 60,
+    "configAudit": 18,
+    "tickets": 12,
+    "users": 70,
+    "platformAlerts": 25,
+    "logs.traffic": 270,
+    "logs.globalprotect": 48,
+    "logs.url": 90,
+    "logs.decryption": 48,
+    "logs.system": 48,
+    "logs.threat": 60,
+    "logs.config": 36
+  }
+}

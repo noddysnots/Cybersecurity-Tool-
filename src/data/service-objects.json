@@ -1,0 +1,110 @@
+[
+  {
+    "id": "svc-svc-quic-block",
+    "name": "svc-quic-block",
+    "protocol": "udp",
+    "destinationPorts": "443,19302-19309",
+    "sourcePorts": "any",
+    "description": "Port-based QUIC and WebRTC media block (CHG-5120)",
+    "container": "Mobile Users"
+  },
+  {
+    "id": "svc-application-default",
+    "name": "application-default",
+    "protocol": "tcp-udp",
+    "destinationPorts": "application-default",
+    "sourcePorts": "any",
+    "description": "Application default ports",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-service-https",
+    "name": "service-https",
+    "protocol": "tcp",
+    "destinationPorts": "443",
+    "sourcePorts": "any",
+    "description": "HTTPS",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-service-http",
+    "name": "service-http",
+    "protocol": "tcp",
+    "destinationPorts": "80",
+    "sourcePorts": "any",
+    "description": "HTTP",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-dns-udp",
+    "name": "service-dns",
+    "protocol": "udp",
+    "destinationPorts": "53",
+    "sourcePorts": "any",
+    "description": "DNS",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-ntp-udp",
+    "name": "service-ntp",
+    "protocol": "udp",
+    "destinationPorts": "123",
+    "sourcePorts": "any",
+    "description": "NTP",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-ike",
+    "name": "service-ike",
+    "protocol": "udp",
+    "destinationPorts": "500,4500",
+    "sourcePorts": "any",
+    "description": "IKE/NAT-T",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-rdp",
+    "name": "service-rdp",
+    "protocol": "tcp",
+    "destinationPorts": "3389",
+    "sourcePorts": "any",
+    "description": "RDP",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-ssh",
+    "name": "service-ssh",
+    "protocol": "tcp",
+    "destinationPorts": "22",
+    "sourcePorts": "any",
+    "description": "SSH",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-smtp",
+    "name": "service-smtp",
+    "protocol": "tcp",
+    "destinationPorts": "25,587",
+    "sourcePorts": "any",
+    "description": "SMTP",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-ldap",
+    "name": "service-ldap",
+    "protocol": "tcp",
+    "destinationPorts": "389,636",
+    "sourcePorts": "any",
+    "description": "LDAP",
+    "container": "Shared"
+  },
+  {
+    "id": "svc-syslog",
+    "name": "service-syslog",
+    "protocol": "udp",
+    "destinationPorts": "514",
+    "sourcePorts": "any",
+    "description": "Syslog",
+    "container": "Shared"
+  }
+]

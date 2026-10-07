@@ -1,0 +1,134 @@
+[
+  {
+    "id": "decrypt-1",
+    "position": 1,
+    "name": "No-Decrypt-Finance",
+    "container": "Shared",
+    "src": [
+      "any"
+    ],
+    "dst": [
+      "Finance-Servers"
+    ],
+    "service": [
+      "any"
+    ],
+    "urlCategory": [
+      "financial-services"
+    ],
+    "action": "no-decrypt",
+    "decryptionProfile": "acme-decrypt",
+    "modifiedBy": "secops.vikram",
+    "modifiedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "id": "decrypt-2",
+    "position": 2,
+    "name": "No-Decrypt-Health",
+    "container": "Shared",
+    "src": [
+      "any"
+    ],
+    "dst": [
+      "any"
+    ],
+    "service": [
+      "any"
+    ],
+    "urlCategory": [
+      "health-and-medicine"
+    ],
+    "action": "no-decrypt",
+    "decryptionProfile": "acme-decrypt",
+    "modifiedBy": "secops.vikram",
+    "modifiedAt": "2026-07-01T08:00:00.000Z"
+  },
+  {
+    "id": "decrypt-3",
+    "position": 3,
+    "name": "Decrypt-Outbound",
+    "container": "Mobile Users",
+    "src": [
+      "GP-Mobile-Pool"
+    ],
+    "dst": [
+      "any"
+    ],
+    "service": [
+      "service-https"
+    ],
+    "urlCategory": [
+      "any"
+    ],
+    "action": "decrypt",
+    "decryptionProfile": "acme-decrypt",
+    "modifiedBy": "secops.vikram",
+    "modifiedAt": "2026-08-15T09:30:00.000Z"
+  },
+  {
+    "id": "decrypt-4",
+    "position": 4,
+    "name": "Decrypt-Branch-Outbound",
+    "container": "Remote Networks",
+    "src": [
+      "All-Branch-Subnets"
+    ],
+    "dst": [
+      "any"
+    ],
+    "service": [
+      "service-https"
+    ],
+    "urlCategory": [
+      "any"
+    ],
+    "action": "decrypt",
+    "decryptionProfile": "acme-decrypt",
+    "modifiedBy": "netops.admin",
+    "modifiedAt": "2026-08-15T09:30:00.000Z"
+  },
+  {
+    "id": "decrypt-5",
+    "position": 5,
+    "name": "No-Decrypt-Pinned",
+    "container": "Shared",
+    "src": [
+      "any"
+    ],
+    "dst": [
+      "any"
+    ],
+    "service": [
+      "any"
+    ],
+    "urlCategory": [
+      "encrypted-dns"
+    ],
+    "action": "no-decrypt",
+    "decryptionProfile": "acme-decrypt",
+    "modifiedBy": "secops.vikram",
+    "modifiedAt": "2026-09-01T11:00:00.000Z"
+  },
+  {
+    "id": "decrypt-6",
+    "position": 6,
+    "name": "Decrypt-SaaS",
+    "container": "Mobile Users",
+    "src": [
+      "GP-Mobile-Pool"
+    ],
+    "dst": [
+      "any"
+    ],
+    "service": [
+      "service-https"
+    ],
+    "urlCategory": [
+      "computer-and-internet-info"
+    ],
+    "action": "decrypt",
+    "decryptionProfile": "acme-decrypt",
+    "modifiedBy": "secops.vikram",
+    "modifiedAt": "2026-09-20T07:00:00.000Z"
+  }
+]
