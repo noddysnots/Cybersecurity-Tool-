@@ -152,20 +152,23 @@ export function SplashPage() {
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-8">
-        <div className="flex w-full max-w-[720px] flex-col items-center text-center">
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 sm:px-10">
+        <div className="flex w-full max-w-[1100px] flex-col items-center text-center">
           <h1
             className={cn(
-              "text-display font-medium tracking-[-0.04em] text-text transition-opacity duration-500 ease-out",
-              nameVisible ? "opacity-100" : "opacity-0",
+              "font-semibold leading-[0.95] tracking-[-0.055em] text-text transition-[opacity,transform] duration-700 ease-out",
+              nameVisible
+                ? "translate-y-0 scale-100 opacity-100"
+                : "translate-y-3 scale-[0.96] opacity-0",
             )}
+            style={{ fontSize: "var(--text-splash)" }}
             data-testid="splash-name"
           >
             {splashCopy.name}
           </h1>
           <p
             className={cn(
-              "mt-4 max-w-[36ch] text-base text-text-muted transition-opacity duration-500 ease-out",
+              "mt-6 max-w-[42ch] text-md text-text-muted transition-opacity duration-500 ease-out sm:text-lg",
               subtitleVisible ? "opacity-100" : "opacity-0",
             )}
             data-testid="splash-subtitle"
@@ -174,7 +177,7 @@ export function SplashPage() {
           </p>
 
           <div
-            className="mt-10 h-px w-[min(280px,60vw)] overflow-hidden bg-border"
+            className="mt-12 h-px w-[min(360px,70vw)] overflow-hidden bg-border"
             aria-hidden="true"
           >
             <div
